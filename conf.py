@@ -131,6 +131,7 @@ NAVIGATION_LINKS = {
         ("/archive.html", "Archive"),
         ("/categories/", "Tags"),
         ("/rss.xml", "RSS feed"),
+        ("/stories/curriculum-vitae/", "CV"),
     ),
 }
 
@@ -174,6 +175,8 @@ POSTS = (
 PAGES = (
     ("stories/*.rst", "stories", "story.tmpl"),
     ("stories/*.txt", "stories", "story.tmpl"),
+    ("stories/*.md", "stories", "story.tmpl"),
+    ("stories/*.html", "stories", "story.tmpl")
 )
 
 
@@ -186,7 +189,7 @@ PAGES = (
 # (e.g. 'Europe/Zurich')
 # Also, if you want to use a different time zone in some of your posts,
 # you can use the ISO 8601/RFC 3339 format (ex. 2012-03-30T23:00:00+02:00)
-TIMEZONE = "GMT"
+TIMEZONE = "Europe/London"
 
 # If you want to use ISO 8601 (also valid RFC 3339) throughout Nikola
 # (especially in new_post), set this to True.
