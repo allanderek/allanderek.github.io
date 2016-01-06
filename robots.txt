@@ -1,0 +1,4 @@
+Sitemap: http://allanderek.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: allanderek.github.io
