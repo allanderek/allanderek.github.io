@@ -135,6 +135,23 @@ NAVIGATION_LINKS = {
     ),
 }
 
+# GLOBAL_CONTEXT = {'blog_sidebar': """\
+#     <div class="sidebar-module sidebar-module-inset">
+#       <h4>About</h4>
+#       <p>This is the Bootstrap Blog theme by @mdo, adapted for Nikola by @Kwpolska.
+#       And this sidebar is completely customizable — you can put anything you want
+#       here!</p>
+#     </div>
+#     <div class="sidebar-module">
+#       <h4>Links</h4>
+#       <ol class="list-unstyled">
+#         <li><a href="http://getbootstrap.com/examples/blog/">Bootstrap Blog Theme</a></li>
+#         <li><a href="https://getnikola.com/">Nikola</a></li>
+#       </ol>
+#     </div>
+#     """}
+
+
 # Name of the theme to use.
 THEME = "bootstrap3"
 
