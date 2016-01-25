@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet</title><link>http://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link href="http://allanderek.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 10 Jan 2016 19:21:34 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Selenium vs CasperJS</title><link>http://allanderek.github.io/posts/selenium-and-casper/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Suppose you have a web service using a Python web framework such as Flask.
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet</title><link>http://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link href="http://allanderek.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Mon, 25 Jan 2016 16:38:42 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Flask + Coverage Analysis</title><link>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Flask + Coverage Analysis&lt;/h2&gt;
+&lt;p&gt;This post demonstrates a simple web application written in Flask with coverage
+analysis for the tests. The main idea should be pretty translatable into most
+Python web application frameworks.&lt;/p&gt;
+&lt;h3&gt;tl;dr&lt;/h3&gt;
+&lt;p&gt;If you're having difficulty getting coverage analysis to work with Flask then
+have a look at my &lt;a href="https://github.com/allanderek/flask-coverage-example"&gt;example repository&lt;/a&gt;.
+The main take away is that you simply start the server in a process of its own
+using 'coverage' to start it. However, in order for this to work you have to
+make sure you can shut the server process down from the test process. To do this
+we simply add a new "shutdown" route which is only available under testing. This
+allows the server process to shutdown naturally and therefore allow 'coverage'
+to complete.&lt;/p&gt;
+&lt;h3&gt;Introduction&lt;/h3&gt;
+&lt;p&gt;It's a good idea to test the web applications you author. Most web application
+frameworks provide relatively solid means to do this. However, if you're doing
+browser automated functional tests against a live server I've found that getting
+&lt;a href="https://pypi.python.org/pypi/coverage"&gt;coverage&lt;/a&gt; to work to be non-trivial. A quick search will reveal similar
+difficulties such as &lt;a href="http://stackoverflow.com/questions/23745370/setting-up-coverage-py-with-flask"&gt;this&lt;/a&gt;
+stack overflow question, which ultimately points to the &lt;a href="http://coverage.readthedocs.org/en/latest/subprocess.html"&gt;coverage documentation
+on sub-processes&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Part of the reason for this might be that the Flask-Testing extension provides
+live server testing class that starts your server in testing mode as part of
+the start-up of the test. It then also shuts the server process down, but in
+so doing does not allow coverage to complete.&lt;/p&gt;
+&lt;p&gt;A simpler method is to start the server process yourself under coverage. You
+then only need a means to shutdown the server programatically. I do this by
+adding a &lt;code&gt;shutdown&lt;/code&gt; route.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><guid>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</guid><pubDate>Mon, 25 Jan 2016 15:20:50 GMT</pubDate></item><item><title>Selenium vs CasperJS</title><link>http://allanderek.github.io/posts/selenium-and-casper/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Suppose you have a web service using a Python web framework such as Flask.
 So you wish to do a full user test by automating the browser. Should you use
 the Python bindings to Selenium or CasperJS? In this post I wish to detail some
 of the advantages and drawbacks of both.&lt;/p&gt;
