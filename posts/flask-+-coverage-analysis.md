@@ -20,11 +20,12 @@ Python web application frameworks.
 If you're having difficulty getting coverage analysis to work with Flask then
 have a look at my [example repository](https://github.com/allanderek/flask-coverage-example).
 The main take away is that you simply start the server in a process of its own
-using 'coverage' to start it. However, in order for this to work you have to
+using `coverage` to start it. However, in order for this to work you have to
 make sure you can shut the server process down from the test process. To do this
-we simply add a new "shutdown" route which is only available under testing. This
-allows the server process to shutdown naturally and therefore allow 'coverage'
-to complete.
+we simply add a new "shutdown" route which is only available under testing. Your
+test code, whether written in Python or, say Javascript, can then make a request
+to this "shutdown" route once it completes its tests. This allows the server
+process to shutdown naturally and therefore allow 'coverage' to complete.
 
 ## Introduction
 
@@ -63,7 +64,7 @@ You should then be able to look in the `htmlcov` directory to see the source
 marked-up with all the lines ran. Specially open the file
 `htmlcov/app_main_py.html`.
 
-To see a an example of a missing line, locate the lines:
+To see an example of a missing line, locate the lines:
 
     try:
         check_fraction(50, 100, '50 of 100 is 50%')
@@ -84,12 +85,13 @@ test the server. This process can be anything you like such as, in the example's
 case `pytest app/main.py`, or it could be an external call to casperJS
 instance if you want to write your browser tests in Javascript.
 
-However, the main points are,
-    * Starting the server process under coverage analysis
-    * Waiting for the server process to indicate that it has started listening
-    * Then starting your test process
-    * Waiting for **both** processes to complete.
-    * Finally running `coverage report` and `coverage html`
+However, the main points are:
+
+  * Starting the server process under coverage analysis
+  * Waiting for the server process to indicate that it has started listening
+  * Then starting your test process
+  * Waiting for **both** processes to complete.
+  * Finally running `coverage report` and `coverage html`
 
 In a simpler form to that in the example repository this would be:
 
@@ -112,7 +114,9 @@ In a simpler form to that in the example repository this would be:
 
 Notice that the above **waits** for the server process to end. Ordinarily the
 server process has to be killed since it expects to run indefinitely. To solve
-that we add a 'shutdown' route. This is done in `manage.py`:
+that we add a `shutdown` route. This is done in `manage.py`:
+
+    from app.main import application, database
 
     def shutdown():
         """Shutdown the Werkzeug dev server, if we're using it.
@@ -148,10 +152,10 @@ that we add a 'shutdown' route. This is done in `manage.py`:
         database.drop_all()
 
 This code mostly speaks for itself. The `shutdown` method is obviously the one
-we wish to, where we add it to the application route handler is the call to
-`application.add_url_rule`. An alternative is to use a decorator to mark routes
-as 'test-only'. I quite like this method since it means the routes are only
-ever added at all when we start the test server.
+we wish to call when the tests are done. We add it to the application route
+handler via the call to `application.add_url_rule`. An alternative is to use a
+decorator to mark routes as 'test-only'. I quite like the method used here since
+it means the routes are only ever added at all when we start the test server.
 
 ### Startup and Shutdown
 
