@@ -15,6 +15,10 @@ This post demonstrates a simple web application written in Flask with coverage
 analysis for the tests. The main idea should be pretty translatable into most
 Python web application frameworks.
 
+### Update
+
+I've updated this scheme and described the update [here](link://slug/update-flask+coverage).
+
 ## tl;dr
 
 If you're having difficulty getting coverage analysis to work with Flask then
@@ -55,10 +59,12 @@ If you just wish to look at the code check out the
 
 The README should explain how to work this but roughly:
 
+```shell
     $ git clone https://github.com/allanderek/flask-coverage-example.git
     $ cd flask-coverage-example
     $ . setup.fish # or source setup.sh
     $ python manage.py test
+```
 
 You should then be able to look in the `htmlcov` directory to see the source
 marked-up with all the lines ran. Specially open the file
@@ -66,16 +72,22 @@ marked-up with all the lines ran. Specially open the file
 
 To see an example of a missing line, locate the lines:
 
+```python
     try:
         check_fraction(50, 100, '50 of 100 is 50%')
         check_fraction(20, 30, '20 of 30 is 66%')
         check_fraction(50, 10, 'Invalid: Fraction greater than Total')
         check_fraction(0, 0, '0 of 0 is 0%')
+```
 
 Comment out some of them, say the bottom two, re-run `python manage.py test`
 and reload `htmlcov/app_main_py.html` in your browser.
 
 ## Server process
+
+**Update:** The code in this section has been updated in the
+[update post](link://slug/update-flask+coverage) and in the
+[example repository](https://github.com/allanderek/flask-coverage-example).
 
 In the [example repository](https://github.com/allanderek/flask-coverage-example)
 if you look in the `manage.py` file you'll see the code to start the server
@@ -95,6 +107,7 @@ However, the main points are:
 
 In a simpler form to that in the example repository this would be:
 
+```python
     import subprocess
     server_command = ['coverage', 'run', '--source', 'app.main',
                       'manage.py', 'run_test_server']
@@ -109,6 +122,7 @@ In a simpler form to that in the example repository this would be:
     os.system("coverage report -m")
     os.system("coverage html")
     return server_return_code
+```
 
 ## Closing down the server
 
@@ -116,40 +130,41 @@ Notice that the above **waits** for the server process to end. Ordinarily the
 server process has to be killed since it expects to run indefinitely. To solve
 that we add a `shutdown` route. This is done in `manage.py`:
 
-    from app.main import application, database
 
-    def shutdown():
-        """Shutdown the Werkzeug dev server, if we're using it.
-        From http://flask.pocoo.org/snippets/67/"""
-        func = flask.request.environ.get('werkzeug.server.shutdown')
-        if func is None:  # pragma: no cover
-            raise RuntimeError('Not running with the Werkzeug Server')
-        func()
-        return 'Server shutting down...'
+```python
+def shutdown():
+    """Shutdown the Werkzeug dev server, if we're using it.
+    From http://flask.pocoo.org/snippets/67/"""
+    func = flask.request.environ.get('werkzeug.server.shutdown')
+    if func is None:  # pragma: no cover
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    return 'Server shutting down...'
 
 
-    @manager.command
-    def run_test_server():
-        """Used by the phantomjs tests to run a live testing server"""
-        # running the server in debug mode during testing fails for some reason
-        application.config['DEBUG'] = True
-        application.config['TESTING'] = True
-        port = application.config['TEST_SERVER_PORT']
-        # Don't use the production database but a temporary test database.
-        application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
-        database.create_all()
-        database.session.commit()
+@manager.command
+def run_test_server():
+    """Used by the phantomjs tests to run a live testing server"""
+    # running the server in debug mode during testing fails for some reason
+    application.config['DEBUG'] = True
+    application.config['TESTING'] = True
+    port = application.config['TEST_SERVER_PORT']
+    # Don't use the production database but a temporary test database.
+    application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
+    database.create_all()
+    database.session.commit()
 
-        # Add a route that allows the test code to shutdown the server, this allows
-        # us to quit the server without killing the process thus enabling coverage
-        # to work.
-        application.add_url_rule('/shutdown', 'shutdown', shutdown,
-                                 methods=['POST', 'GET'])
+    # Add a route that allows the test code to shutdown the server, this allows
+    # us to quit the server without killing the process thus enabling coverage
+    # to work.
+    application.add_url_rule('/shutdown', 'shutdown', shutdown,
+                             methods=['POST', 'GET'])
 
-        application.run(port=port, use_reloader=False, threaded=True)
+    application.run(port=port, use_reloader=False, threaded=True)
 
-        database.session.remove()
-        database.drop_all()
+    database.session.remove()
+    database.drop_all()
+```
 
 This code mostly speaks for itself. The `shutdown` method is obviously the one
 we wish to call when the tests are done. We add it to the application route
@@ -163,16 +178,20 @@ For many test strategies you will want to do something before and after the
 server runs. In this example we setup the database to use a temporary database,
 in which we create all of the tables anew:
 
+```python
     # Don't use the production database but a temporary test database.
     application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
     database.create_all()
     database.session.commit()
+```
 
 At the end of the test we remove the database session and drop all of the
 contents of the database.
 
+```python
     database.session.remove()
     database.drop_all()
+```
 
 In a real test-suite you may well have a way of factoring out this start-up and
 tear-down code, but I've left it as simple and test-framework agnostic for this
@@ -180,16 +199,22 @@ example as I could.
 
 ### At the end of your tests
 
+**Update:** This section is now not required. See the
+[update post](link://slug/update-flask+coverage).
+
 Now for this `shutdown` to actually work, your test suite has to call access
 the `shutdown` route. There are many ways to write this and it will hugely
 depend on your test framework. However, in the example repository it is done
 via:
 
-    finally:
-        driver.get(get_url('shutdown'))
-        driver.close()
+```python
+finally:
+    driver.get(get_url('shutdown'))
+    driver.close()
+```
 
-In the `test_my_server` method.
+In the `test_my_server` method. **Update:** Not now it isn't as this is not
+required at all.
 
 ## Conclusion
 

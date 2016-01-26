@@ -11,6 +11,7 @@
 <link rel="canonical" href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis/">
 <!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Allan Clark">
 <link rel="prev" href="../selenium-and-casper/" title="Selenium vs CasperJS" type="text/html">
+<link rel="next" href="../update-flask%2Bcoverage/" title="Update: Flask+Coverage" type="text/html">
 <meta property="og:site_name" content="Coding Diet">
 <meta property="og:title" content="Flask + Coverage Analysis">
 <meta property="og:url" content="http://allanderek.github.io/posts/flask-%2B-coverage-analysis/">
@@ -100,6 +101,8 @@ Python web applic">
 <p>This post demonstrates a simple web application written in Flask with coverage
 analysis for the tests. The main idea should be pretty translatable into most
 Python web application frameworks.</p>
+<h4>Update</h4>
+<p>I've updated this scheme and described the update <a href="../update-flask%2Bcoverage">here</a>.</p>
 <h3>tl;dr</h3>
 <p>If you're having difficulty getting coverage analysis to work with Flask then
 have a look at my <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.
@@ -131,10 +134,10 @@ adding a <code>shutdown</code> route.</p>
 <p>If you just wish to look at the code check out the
 <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.</p>
 <p>The README should explain how to work this but roughly:</p>
-<pre class="code literal-block"><span class="nv">$ </span>git clone https://github.com/allanderek/flask-coverage-example.git
-<span class="nv">$ </span><span class="nb">cd </span>flask-coverage-example
-<span class="nv">$ </span>. setup.fish <span class="c"># or source setup.sh</span>
-<span class="nv">$ </span>python manage.py <span class="nb">test</span>
+<pre class="code literal-block">    <span class="nv">$ </span>git clone https://github.com/allanderek/flask-coverage-example.git
+    <span class="nv">$ </span><span class="nb">cd </span>flask-coverage-example
+    <span class="nv">$ </span>. setup.fish <span class="c"># or source setup.sh</span>
+    <span class="nv">$ </span>python manage.py <span class="nb">test</span>
 </pre>
 
 
@@ -142,17 +145,20 @@ adding a <code>shutdown</code> route.</p>
 marked-up with all the lines ran. Specially open the file
 <code>htmlcov/app_main_py.html</code>.</p>
 <p>To see an example of a missing line, locate the lines:</p>
-<pre class="code literal-block"><span class="k">try</span><span class="o">:</span>
-    <span class="n">check_fraction</span><span class="o">(</span><span class="mi">50</span><span class="o">,</span> <span class="mi">100</span><span class="o">,</span> <span class="s1">'50 of 100 is 50%'</span><span class="o">)</span>
-    <span class="n">check_fraction</span><span class="o">(</span><span class="mi">20</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="s1">'20 of 30 is 66%'</span><span class="o">)</span>
-    <span class="n">check_fraction</span><span class="o">(</span><span class="mi">50</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="s1">'Invalid: Fraction greater than Total'</span><span class="o">)</span>
-    <span class="n">check_fraction</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="s1">'0 of 0 is 0%'</span><span class="o">)</span>
+<pre class="code literal-block">    <span class="k">try</span><span class="p">:</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">'50 of 100 is 50%'</span><span class="p">)</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'20 of 30 is 66%'</span><span class="p">)</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s">'Invalid: Fraction greater than Total'</span><span class="p">)</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'0 of 0 is 0%'</span><span class="p">)</span>
 </pre>
 
 
 <p>Comment out some of them, say the bottom two, re-run <code>python manage.py test</code>
 and reload <code>htmlcov/app_main_py.html</code> in your browser.</p>
 <h3>Server process</h3>
+<p><strong>Update:</strong> The code in this section has been updated in the
+<a href="../update-flask%2Bcoverage">update post</a> and in the
+<a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.</p>
 <p>In the <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>
 if you look in the <code>manage.py</code> file you'll see the code to start the server
 process. This is in the <code>run_with_test_server</code> function which starts the server
@@ -170,20 +176,20 @@ instance if you want to write your browser tests in Javascript.</p>
 </li>
 </ul>
 <p>In a simpler form to that in the example repository this would be:</p>
-<pre class="code literal-block"><span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="n">server_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'coverage'</span><span class="p">,</span> <span class="s">'run'</span><span class="p">,</span> <span class="s">'--source'</span><span class="p">,</span> <span class="s">'app.main'</span><span class="p">,</span>
-                  <span class="s">'manage.py'</span><span class="p">,</span> <span class="s">'run_test_server'</span><span class="p">]</span>
-<span class="n">server</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">server_command</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">server</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">b</span><span class="s">' * Running on'</span><span class="p">):</span>
-        <span class="k">break</span>
-<span class="n">test_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'pytest'</span><span class="p">,</span> <span class="s">'app/main.py'</span><span class="p">]</span>
-<span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
-<span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-<span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"coverage report -m"</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"coverage html"</span><span class="p">)</span>
-<span class="k">return</span> <span class="n">server_return_code</span>
+<pre class="code literal-block">    <span class="kn">import</span> <span class="nn">subprocess</span>
+    <span class="n">server_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'coverage'</span><span class="p">,</span> <span class="s">'run'</span><span class="p">,</span> <span class="s">'--source'</span><span class="p">,</span> <span class="s">'app.main'</span><span class="p">,</span>
+                      <span class="s">'manage.py'</span><span class="p">,</span> <span class="s">'run_test_server'</span><span class="p">]</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">server_command</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">server</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">b</span><span class="s">' * Running on'</span><span class="p">):</span>
+            <span class="k">break</span>
+    <span class="n">test_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'pytest'</span><span class="p">,</span> <span class="s">'app/main.py'</span><span class="p">]</span>
+    <span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+    <span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"coverage report -m"</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"coverage html"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">server_return_code</span>
 </pre>
 
 
@@ -191,9 +197,7 @@ instance if you want to write your browser tests in Javascript.</p>
 <p>Notice that the above <strong>waits</strong> for the server process to end. Ordinarily the
 server process has to be killed since it expects to run indefinitely. To solve
 that we add a <code>shutdown</code> route. This is done in <code>manage.py</code>:</p>
-<pre class="code literal-block"><span class="kn">from</span> <span class="nn">app.main</span> <span class="kn">import</span> <span class="n">application</span><span class="p">,</span> <span class="n">database</span>
-
-<span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
+<pre class="code literal-block"><span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
     <span class="sd">"""Shutdown the Werkzeug dev server, if we're using it.</span>
 <span class="sd">    From http://flask.pocoo.org/snippets/67/"""</span>
     <span class="n">func</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'werkzeug.server.shutdown'</span><span class="p">)</span>
@@ -237,17 +241,17 @@ it means the routes are only ever added at all when we start the test server.</p
 <p>For many test strategies you will want to do something before and after the
 server runs. In this example we setup the database to use a temporary database,
 in which we create all of the tables anew:</p>
-<pre class="code literal-block"># Don't use the production database but a temporary test database.
-application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
-database.create_all()
-database.session.commit()
+<pre class="code literal-block">    <span class="c"># Don't use the production database but a temporary test database.</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'SQLALCHEMY_DATABASE_URI'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"sqlite:///test.db"</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre>
 
 
 <p>At the end of the test we remove the database session and drop all of the
 contents of the database.</p>
-<pre class="code literal-block">database.session.remove()
-database.drop_all()
+<pre class="code literal-block">    <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
 </pre>
 
 
@@ -255,17 +259,20 @@ database.drop_all()
 tear-down code, but I've left it as simple and test-framework agnostic for this
 example as I could.</p>
 <h4>At the end of your tests</h4>
+<p><strong>Update:</strong> This section is now not required. See the
+<a href="../update-flask%2Bcoverage">update post</a>.</p>
 <p>Now for this <code>shutdown</code> to actually work, your test suite has to call access
 the <code>shutdown</code> route. There are many ways to write this and it will hugely
 depend on your test framework. However, in the example repository it is done
 via:</p>
-<pre class="code literal-block"><span class="n">finally</span><span class="o">:</span>
-    <span class="n">driver</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">get_url</span><span class="o">(</span><span class="s1">'shutdown'</span><span class="o">))</span>
-    <span class="n">driver</span><span class="o">.</span><span class="na">close</span><span class="o">()</span>
+<pre class="code literal-block"><span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s">'shutdown'</span><span class="p">))</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre>
 
 
-<p>In the <code>test_my_server</code> method.</p>
+<p>In the <code>test_my_server</code> method. <strong>Update:</strong> Not now it isn't as this is not
+required at all.</p>
 <h3>Conclusion</h3>
 <p>Go see the <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.</p>
 </div>
@@ -273,6 +280,9 @@ via:</p>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../selenium-and-casper/" rel="prev" title="Selenium vs CasperJS">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../update-flask%2Bcoverage/" rel="next" title="Update: Flask+Coverage">Next post</a>
             </li>
         </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
         
