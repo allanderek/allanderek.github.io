@@ -104,11 +104,12 @@ Python web application frameworks.</p>
 <p>If you're having difficulty getting coverage analysis to work with Flask then
 have a look at my <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.
 The main take away is that you simply start the server in a process of its own
-using 'coverage' to start it. However, in order for this to work you have to
+using <code>coverage</code> to start it. However, in order for this to work you have to
 make sure you can shut the server process down from the test process. To do this
-we simply add a new "shutdown" route which is only available under testing. This
-allows the server process to shutdown naturally and therefore allow 'coverage'
-to complete.</p>
+we simply add a new "shutdown" route which is only available under testing. Your
+test code, whether written in Python or, say Javascript, can then make a request
+to this "shutdown" route once it completes its tests. This allows the server
+process to shutdown naturally and therefore allow 'coverage' to complete.</p>
 <h3>Introduction</h3>
 <p>It's a good idea to test the web applications you author. Most web application
 frameworks provide relatively solid means to do this. However, if you're doing
@@ -140,7 +141,7 @@ adding a <code>shutdown</code> route.</p>
 <p>You should then be able to look in the <code>htmlcov</code> directory to see the source
 marked-up with all the lines ran. Specially open the file
 <code>htmlcov/app_main_py.html</code>.</p>
-<p>To see a an example of a missing line, locate the lines:</p>
+<p>To see an example of a missing line, locate the lines:</p>
 <pre class="code literal-block"><span class="k">try</span><span class="o">:</span>
     <span class="n">check_fraction</span><span class="o">(</span><span class="mi">50</span><span class="o">,</span> <span class="mi">100</span><span class="o">,</span> <span class="s1">'50 of 100 is 50%'</span><span class="o">)</span>
     <span class="n">check_fraction</span><span class="o">(</span><span class="mi">20</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="s1">'20 of 30 is 66%'</span><span class="o">)</span>
@@ -159,12 +160,15 @@ process. This is in the <code>run_with_test_server</code> function which starts 
 test the server. This process can be anything you like such as, in the example's
 case <code>pytest app/main.py</code>, or it could be an external call to casperJS
 instance if you want to write your browser tests in Javascript.</p>
-<p>However, the main points are,
-    * Starting the server process under coverage analysis
-    * Waiting for the server process to indicate that it has started listening
-    * Then starting your test process
-    * Waiting for <strong>both</strong> processes to complete.
-    * Finally running <code>coverage report</code> and <code>coverage html</code></p>
+<p>However, the main points are:</p>
+<ul>
+<li>Starting the server process under coverage analysis</li>
+<li>Waiting for the server process to indicate that it has started listening</li>
+<li>Then starting your test process</li>
+<li>Waiting for <strong>both</strong> processes to complete.</li>
+<li>Finally running <code>coverage report</code> and <code>coverage html</code>
+</li>
+</ul>
 <p>In a simpler form to that in the example repository this would be:</p>
 <pre class="code literal-block"><span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="n">server_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'coverage'</span><span class="p">,</span> <span class="s">'run'</span><span class="p">,</span> <span class="s">'--source'</span><span class="p">,</span> <span class="s">'app.main'</span><span class="p">,</span>
@@ -186,47 +190,49 @@ instance if you want to write your browser tests in Javascript.</p>
 <h3>Closing down the server</h3>
 <p>Notice that the above <strong>waits</strong> for the server process to end. Ordinarily the
 server process has to be killed since it expects to run indefinitely. To solve
-that we add a 'shutdown' route. This is done in <code>manage.py</code>:</p>
-<pre class="code literal-block">def shutdown():
-    """Shutdown the Werkzeug dev server, if we're using it.
-    From http://flask.pocoo.org/snippets/67/"""
-    func = flask.request.environ.get('werkzeug.server.shutdown')
-    if func is None:  # pragma: no cover
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-    return 'Server shutting down...'
+that we add a <code>shutdown</code> route. This is done in <code>manage.py</code>:</p>
+<pre class="code literal-block"><span class="kn">from</span> <span class="nn">app.main</span> <span class="kn">import</span> <span class="n">application</span><span class="p">,</span> <span class="n">database</span>
+
+<span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
+    <span class="sd">"""Shutdown the Werkzeug dev server, if we're using it.</span>
+<span class="sd">    From http://flask.pocoo.org/snippets/67/"""</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'werkzeug.server.shutdown'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">'Not running with the Werkzeug Server'</span><span class="p">)</span>
+    <span class="n">func</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s">'Server shutting down...'</span>
 
 
-@manager.command
-def run_test_server():
-    """Used by the phantomjs tests to run a live testing server"""
-    # running the server in debug mode during testing fails for some reason
-    application.config['DEBUG'] = True
-    application.config['TESTING'] = True
-    port = application.config['TEST_SERVER_PORT']
-    # Don't use the production database but a temporary test database.
-    application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
-    database.create_all()
-    database.session.commit()
+<span class="nd">@manager.command</span>
+<span class="k">def</span> <span class="nf">run_test_server</span><span class="p">():</span>
+    <span class="sd">"""Used by the phantomjs tests to run a live testing server"""</span>
+    <span class="c"># running the server in debug mode during testing fails for some reason</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'DEBUG'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'TESTING'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'TEST_SERVER_PORT'</span><span class="p">]</span>
+    <span class="c"># Don't use the production database but a temporary test database.</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'SQLALCHEMY_DATABASE_URI'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"sqlite:///test.db"</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    # Add a route that allows the test code to shutdown the server, this allows
-    # us to quit the server without killing the process thus enabling coverage
-    # to work.
-    application.add_url_rule('/shutdown', 'shutdown', shutdown,
-                             methods=['POST', 'GET'])
+    <span class="c"># Add a route that allows the test code to shutdown the server, this allows</span>
+    <span class="c"># us to quit the server without killing the process thus enabling coverage</span>
+    <span class="c"># to work.</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s">'/shutdown'</span><span class="p">,</span> <span class="s">'shutdown'</span><span class="p">,</span> <span class="n">shutdown</span><span class="p">,</span>
+                             <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'POST'</span><span class="p">,</span> <span class="s">'GET'</span><span class="p">])</span>
 
-    application.run(port=port, use_reloader=False, threaded=True)
+    <span class="n">application</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">use_reloader</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    database.session.remove()
-    database.drop_all()
+    <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
 </pre>
 
 
 <p>This code mostly speaks for itself. The <code>shutdown</code> method is obviously the one
-we wish to, where we add it to the application route handler is the call to
-<code>application.add_url_rule</code>. An alternative is to use a decorator to mark routes
-as 'test-only'. I quite like this method since it means the routes are only
-ever added at all when we start the test server.</p>
+we wish to call when the tests are done. We add it to the application route
+handler via the call to <code>application.add_url_rule</code>. An alternative is to use a
+decorator to mark routes as 'test-only'. I quite like the method used here since
+it means the routes are only ever added at all when we start the test server.</p>
 <h4>Startup and Shutdown</h4>
 <p>For many test strategies you will want to do something before and after the
 server runs. In this example we setup the database to use a temporary database,

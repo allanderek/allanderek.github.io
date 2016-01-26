@@ -85,11 +85,12 @@ Python web application frameworks.</p>
 <p>If you're having difficulty getting coverage analysis to work with Flask then
 have a look at my <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.
 The main take away is that you simply start the server in a process of its own
-using 'coverage' to start it. However, in order for this to work you have to
+using <code>coverage</code> to start it. However, in order for this to work you have to
 make sure you can shut the server process down from the test process. To do this
-we simply add a new "shutdown" route which is only available under testing. This
-allows the server process to shutdown naturally and therefore allow 'coverage'
-to complete.</p>
+we simply add a new "shutdown" route which is only available under testing. Your
+test code, whether written in Python or, say Javascript, can then make a request
+to this "shutdown" route once it completes its tests. This allows the server
+process to shutdown naturally and therefore allow 'coverage' to complete.</p>
 <h3>Introduction</h3>
 <p>It's a good idea to test the web applications you author. Most web application
 frameworks provide relatively solid means to do this. However, if you're doing
