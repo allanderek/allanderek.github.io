@@ -15,7 +15,7 @@
  </url>
  <url>
   <loc>http://allanderek.github.io/archive.html</loc>
-  <lastmod>2016-01-26T15:27:00Z</lastmod>
+  <lastmod>2016-02-09T14:47:00Z</lastmod>
  </url>
  <url>
   <loc>http://allanderek.github.io/categories/</loc>
@@ -32,6 +32,10 @@
  <url>
   <loc>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</loc>
   <lastmod>2016-01-25T15:38:00Z</lastmod>
+ </url>
+ <url>
+  <loc>http://allanderek.github.io/posts/import-placement/</loc>
+  <lastmod>2016-02-09T14:47:00Z</lastmod>
  </url>
  <url>
   <loc>http://allanderek.github.io/posts/selenium-and-casper/</loc>

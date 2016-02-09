@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet</title><link>http://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link type="application/rss+xml" href="http://allanderek.github.io/rss.xml" rel="self"></atom:link><language>en</language><lastBuildDate>Tue, 26 Jan 2016 15:36:53 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Update: Flask+Coverage</title><link>http://allanderek.github.io/posts/update-flask%2Bcoverage/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Update: Flask+Coverage Analysis&lt;/h2&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Coding Diet</title><link>http://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link type="application/rss+xml" rel="self" href="http://allanderek.github.io/rss.xml"></atom:link><language>en</language><lastBuildDate>Tue, 09 Feb 2016 14:53:09 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Placement of Python Import Statements</title><link>http://allanderek.github.io/posts/import-placement/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;&lt;a href="https://www.python.org/dev/peps/pep-0008/#imports"&gt;Pep 8 specifies&lt;/a&gt;
+that all import statements should be "put at the top of the file, just after any
+module comments and docstrings, and before module globals and constants."
+However, it does not really specify the logic behind this. I'm going to try to
+articulate some reasons to have import statements somewhere other than directly
+at the top of the file. I'll also state some arguments for having such
+&lt;code&gt;import&lt;/code&gt; statements at the top.&lt;/p&gt;
+&lt;p&gt;Note, that
+&lt;a href="https://www.python.org/dev/peps/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds"&gt;Pep 8 also specifies&lt;/a&gt;
+that it is important to "know when to be inconsistent -- sometimes the style guide just doesn't
+apply. When in doubt, use your best judgment". So the purpose of this post is to
+suggest some reasons why you might deviate from the style guide with respect to
+&lt;code&gt;import&lt;/code&gt; statements at the top.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://allanderek.github.io/posts/import-placement/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><guid>http://allanderek.github.io/posts/import-placement/</guid><pubDate>Wed, 03 Feb 2016 13:08:54 GMT</pubDate></item><item><title>Update: Flask+Coverage</title><link>http://allanderek.github.io/posts/update-flask%2Bcoverage/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Update: Flask+Coverage Analysis&lt;/h2&gt;
 &lt;p&gt;In a &lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis"&gt;previous post&lt;/a&gt;
 I demonstrated how to get &lt;code&gt;coverage&lt;/code&gt; analysis working for a Flask web application
 in a relatively simple manner. In the section &lt;em&gt;"At then end of your tests"&lt;/em&gt; I
