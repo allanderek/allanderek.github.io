@@ -15,7 +15,7 @@
  </url>
  <url>
   <loc>http://allanderek.github.io/archive.html</loc>
-  <lastmod>2016-02-20T13:40:00Z</lastmod>
+  <lastmod>2016-02-23T15:23:00Z</lastmod>
  </url>
  <url>
   <loc>http://allanderek.github.io/categories/</loc>
@@ -36,6 +36,10 @@
  <url>
   <loc>http://allanderek.github.io/posts/import-placement/</loc>
   <lastmod>2016-02-09T14:47:00Z</lastmod>
+ </url>
+ <url>
+  <loc>http://allanderek.github.io/posts/method-cascading/</loc>
+  <lastmod>2016-02-23T15:23:00Z</lastmod>
  </url>
  <url>
   <loc>http://allanderek.github.io/posts/selenium-and-casper/</loc>

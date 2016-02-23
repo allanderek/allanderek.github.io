@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<base href="http://allanderek.github.io/posts/method-cascading/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Method Cascading | Coding Diet</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta content="#5670d4" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="http://allanderek.github.io/posts/method-cascading/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Allan Clark">
+<link rel="prev" href="../test-first-mutation-testing/" title="Test First and Mutation Testing" type="text/html">
+<meta property="og:site_name" content="Coding Diet">
+<meta property="og:title" content="Method Cascading">
+<meta property="og:url" content="http://allanderek.github.io/posts/method-cascading/">
+<meta property="og:description" content="Method Cascading
+Vasudev Ram has a thoughful post about method chaining/cascading
+that I picked up from planet python in which he
+basically argues for the use of method cascading. I'm going to disagre">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2016-02-23T14:54:35Z">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://allanderek.github.io/">
+
+                <span id="blog-title">Coding Diet</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+                </li>
+<li>
+<a href="../../stories/curriculum-vitae/">CV</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.md" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Method Cascading</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                    Allan Clark
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2016-02-23T14:54:35Z" itemprop="datePublished" title="2016-02-23 14:54">2016-02-23 14:54</time></a></p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/method-cascading.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.md" id="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<h2>Method Cascading</h2>
+<p>Vasudev Ram has a thoughful <a href="http://jugad2.blogspot.co.uk/2016/02/examples-of-method-chaining-in-python.html">post about method chaining/cascading</a>
+that I picked up from <a href="http://planetpython.org/">planet python</a> in which he
+basically argues for the use of method cascading. I'm going to disagree.
+Essentially, I simply don't understand any benefit of using cascading. It's a
+nice post though and includes some references to other method cascading links.</p>
+<p>Method chaining is the writing of multiple method calls directly after one
+another, usually on the same line, such as (to take Vasudev's example):</p>
+<pre class="code literal-block">foo.bar().baz()
+</pre>
+
+
+<p>Cascading is the specific case of chaining in which each intermediate object
+is the same object. To achieve this <code>bar</code> must return <code>self</code> (in Python, or
+<code>this</code> in other object oriented languages).</p>
+<p>Here is Vasudev's first example:</p>
+<blockquote>
+<p>Let's say we have a class Foo that contains two methods, bar and baz.
+We create an instance of the class Foo:</p>
+<pre class="code literal-block">foo = Foo()
+</pre>
+
+
+<p>Without method chaining, to call both bar and baz in turn, on the object foo, we would do this:</p>
+<pre class="code literal-block"># Fragment 1
+foo.bar() # Call method bar() on object foo.
+foo.baz() # Call method baz() on object foo.
+</pre>
+
+
+<p>With method chaining, we can this:</p>
+<pre class="code literal-block"># Fragment 2
+# Chain calls to methods bar() and baz() on object foo.
+foo.bar().baz()
+</pre>
+
+
+</blockquote>
+<p>So the claim for method cascading then is:</p>
+<blockquote>
+<p>One advantage of method chaining is that it reduces the number of times you
+have to use the name of the object: only once in Fragment 2 above, vs. twice
+in Fragment 1; and this difference will increase when there are more method
+calls on the same object. Thereby, it also slightly reduces the amount of code
+one has to read, understand, test, debug and maintain, overall.
+Not major benefits, but can be useful.</p>
+</blockquote>
+<p>So method cascading reduces the number of times you have to use the name of an
+object, but this makes it inherently less explicit that you're operating on the
+same object. Looking at <code>foo.bar().baz()</code> does not tell me that <code>baz</code> is being
+called on the same object as <code>bar</code>. Unless you're keen on method cascading and
+use it yourself, it looks like the opposite.</p>
+<p>Method cascading may therefore reduce</p>
+<blockquote>
+<p>the amount of code one has to read, understand, test, debug and maintain, overall.</p>
+</blockquote>
+<p>However it does so, only in a "code-golf" way. There is no point in reducing
+the amount of code to understand if by doing so you increase the difficulty with
+which you can understand it.</p>
+<p>A common example of method cascading is one Vasudev includes, that of string
+processing. Here we have a line such as (which I've translated into Python 3):</p>
+<pre class="code literal-block">print ('After uppercase then capitalize:',
+        sp.dup().uppercase().capitalize().rep())
+</pre>
+
+
+<p>Whilst it is quite nice to be able to do this in one line without using a new
+variable name, I would write this without method cascading as:</p>
+<pre class="code literal-block">duplicate = sp.dup()
+duplicate.uppercase()
+duplicate.capitalize()
+print('After uppercase then capitalize:', duplicate.rep())
+</pre>
+
+
+<p>Now it is obvious that <code>dup</code> returns something new, in this case it is a
+duplicate of the original string. It is also clear that <code>uppercase</code> and
+<code>capitalize</code> do <em>not</em> return new objects but modify the <code>duplicate</code> object.</p>
+<p>So, I'm afraid I just don't see the use case for cascading.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../test-first-mutation-testing/" rel="prev" title="Test First and Mutation Testing">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="allanderek",
+            disqus_url="http://allanderek.github.io/posts/method-cascading/",
+        disqus_title="Method Cascading",
+        disqus_identifier="cache/posts/method-cascading.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="allanderek";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2016         <a href="mailto:allan.clark@gmail.com">Allan Clark</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>
