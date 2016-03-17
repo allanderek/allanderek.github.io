@@ -21,6 +21,8 @@ that I picked up from planet python in which he
 basically argues for the use of method cascading. I'm going to disagre">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-02-23T14:54:35Z">
+<meta property="article:tag" content="coding style">
+<meta property="article:tag" content="python">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -105,7 +107,7 @@ Essentially, I simply don't understand any benefit of using cascading. It's a
 nice post though and includes some references to other method cascading links.</p>
 <p>Method chaining is the writing of multiple method calls directly after one
 another, usually on the same line, such as (to take Vasudev's example):</p>
-<pre class="code literal-block">foo.bar().baz()
+<pre class="code literal-block"><span></span>foo.bar().baz()
 </pre>
 
 
@@ -116,19 +118,19 @@ is the same object. To achieve this <code>bar</code> must return <code>self</cod
 <blockquote>
 <p>Let's say we have a class Foo that contains two methods, bar and baz.
 We create an instance of the class Foo:</p>
-<pre class="code literal-block">foo = Foo()
+<pre class="code literal-block"><span></span>foo = Foo()
 </pre>
 
 
 <p>Without method chaining, to call both bar and baz in turn, on the object foo, we would do this:</p>
-<pre class="code literal-block"># Fragment 1
+<pre class="code literal-block"><span></span># Fragment 1
 foo.bar() # Call method bar() on object foo.
 foo.baz() # Call method baz() on object foo.
 </pre>
 
 
 <p>With method chaining, we can this:</p>
-<pre class="code literal-block"># Fragment 2
+<pre class="code literal-block"><span></span># Fragment 2
 # Chain calls to methods bar() and baz() on object foo.
 foo.bar().baz()
 </pre>
@@ -158,14 +160,14 @@ the amount of code to understand if by doing so you increase the difficulty with
 which you can understand it.</p>
 <p>A common example of method cascading is one Vasudev includes, that of string
 processing. Here we have a line such as (which I've translated into Python 3):</p>
-<pre class="code literal-block">print ('After uppercase then capitalize:',
+<pre class="code literal-block"><span></span>print ('After uppercase then capitalize:',
         sp.dup().uppercase().capitalize().rep())
 </pre>
 
 
 <p>Whilst it is quite nice to be able to do this in one line without using a new
 variable name, I would write this without method cascading as:</p>
-<pre class="code literal-block">duplicate = sp.dup()
+<pre class="code literal-block"><span></span>duplicate = sp.dup()
 duplicate.uppercase()
 duplicate.capitalize()
 print('After uppercase then capitalize:', duplicate.rep())
@@ -178,7 +180,11 @@ duplicate of the original string. It is also clear that <code>uppercase</code> a
 <p>So, I'm afraid I just don't see the use case for cascading.</p>
 </div>
     </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/coding-style/" rel="tag">coding style</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+        </ul>
+<ul class="pager hidden-print">
 <li class="previous">
                 <a href="../test-first-mutation-testing/" rel="prev" title="Test First and Mutation Testing">Previous post</a>
             </li>

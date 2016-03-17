@@ -222,7 +222,7 @@ Essentially, I simply don't understand any benefit of using cascading. It's a
 nice post though and includes some references to other method cascading links.</p>
 <p>Method chaining is the writing of multiple method calls directly after one
 another, usually on the same line, such as (to take Vasudev's example):</p>
-<pre class="code literal-block">foo.bar().baz()
+<pre class="code literal-block"><span></span>foo.bar().baz()
 </pre>
 
 
@@ -233,19 +233,19 @@ is the same object. To achieve this <code>bar</code> must return <code>self</cod
 <blockquote>
 <p>Let's say we have a class Foo that contains two methods, bar and baz.
 We create an instance of the class Foo:</p>
-<pre class="code literal-block">foo = Foo()
+<pre class="code literal-block"><span></span>foo = Foo()
 </pre>
 
 
 <p>Without method chaining, to call both bar and baz in turn, on the object foo, we would do this:</p>
-<pre class="code literal-block"># Fragment 1
+<pre class="code literal-block"><span></span># Fragment 1
 foo.bar() # Call method bar() on object foo.
 foo.baz() # Call method baz() on object foo.
 </pre>
 
 
 <p>With method chaining, we can this:</p>
-<pre class="code literal-block"># Fragment 2
+<pre class="code literal-block"><span></span># Fragment 2
 # Chain calls to methods bar() and baz() on object foo.
 foo.bar().baz()
 </pre>
@@ -275,14 +275,14 @@ the amount of code to understand if by doing so you increase the difficulty with
 which you can understand it.</p>
 <p>A common example of method cascading is one Vasudev includes, that of string
 processing. Here we have a line such as (which I've translated into Python 3):</p>
-<pre class="code literal-block">print ('After uppercase then capitalize:',
+<pre class="code literal-block"><span></span>print ('After uppercase then capitalize:',
         sp.dup().uppercase().capitalize().rep())
 </pre>
 
 
 <p>Whilst it is quite nice to be able to do this in one line without using a new
 variable name, I would write this without method cascading as:</p>
-<pre class="code literal-block">duplicate = sp.dup()
+<pre class="code literal-block"><span></span>duplicate = sp.dup()
 duplicate.uppercase()
 duplicate.capitalize()
 print('After uppercase then capitalize:', duplicate.rep())
@@ -328,7 +328,7 @@ it.</p>
 source code generally to check that your test suite is not indifferent to the
 change. For example, your source code may contain a conditional statement
 such as the following:</p>
-<pre class="code literal-block">    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<pre class="code literal-block"><span></span>    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">do_something</span><span class="p">()</span>
 </pre>
 
@@ -430,8 +430,8 @@ I demonstrated how to get <code>coverage</code> analysis working for a Flask web
 in a relatively simple manner. In the section <em>"At then end of your tests"</em> I
 stated that you needed your tests to clean-up by telling the server to shutdown.
 The end of your test code would look something like this:</p>
-<pre class="code literal-block"><span class="k">finally</span><span class="p">:</span>
-    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s">'shutdown'</span><span class="p">))</span>
+<pre class="code literal-block"><span></span><span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s1">'shutdown'</span><span class="p">))</span>
     <span class="o">...</span>
 </pre>
 
@@ -445,17 +445,17 @@ simply doing this in <code>manage.py</code> file.</p>
 </h3>
 <p>Previously, we had the following code within our <code>manage.py</code> script within the
 <code>run_with_test_server</code> method:</p>
-<pre class="code literal-block"><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+<pre class="code literal-block"><span></span><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
 <span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 <span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 </pre>
 
 
 <p>We now update this to be:</p>
-<pre class="code literal-block"><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+<pre class="code literal-block"><span></span><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
 <span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'TEST_SERVER_PORT'</span><span class="p">]</span>
-<span class="n">shutdown_url</span> <span class="o">=</span> <span class="s">'http://localhost:{}/shutdown'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+<span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+<span class="n">shutdown_url</span> <span class="o">=</span> <span class="s1">'http://localhost:{}/shutdown'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">shutdown_url</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
 <span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>

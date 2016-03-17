@@ -2,7 +2,7 @@
 .. title: Flask + Coverage Analysis
 .. slug: flask-+-coverage-analysis
 .. date: 2016-01-25 15:20:50 UTC
-.. tags:
+.. tags: python, selenium, testing, coverage
 .. category:
 .. link:
 .. description:

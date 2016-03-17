@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet (coding style)</title><link>http://allanderek.github.io/</link><description></description><atom:link href="http://allanderek.github.io/categories/coding-style.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Thu, 17 Mar 2016 11:25:26 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Method Cascading</title><link>http://allanderek.github.io/posts/method-cascading/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Method Cascading&lt;/h2&gt;
+&lt;p&gt;Vasudev Ram has a thoughful &lt;a href="http://jugad2.blogspot.co.uk/2016/02/examples-of-method-chaining-in-python.html"&gt;post about method chaining/cascading&lt;/a&gt;
+that I picked up from &lt;a href="http://planetpython.org/"&gt;planet python&lt;/a&gt; in which he
+basically argues for the use of method cascading. I'm going to disagree.
+Essentially, I simply don't understand any benefit of using cascading. It's a
+nice post though and includes some references to other method cascading links.&lt;/p&gt;
+&lt;p&gt;Method chaining is the writing of multiple method calls directly after one
+another, usually on the same line, such as (to take Vasudev's example):&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;foo.bar().baz()
+&lt;/pre&gt;
+
+
+&lt;p&gt;Cascading is the specific case of chaining in which each intermediate object
+is the same object. To achieve this &lt;code&gt;bar&lt;/code&gt; must return &lt;code&gt;self&lt;/code&gt; (in Python, or
+&lt;code&gt;this&lt;/code&gt; in other object oriented languages).&lt;/p&gt;
+&lt;p&gt;Here is Vasudev's first example:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Let's say we have a class Foo that contains two methods, bar and baz.
+We create an instance of the class Foo:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;foo = Foo()
+&lt;/pre&gt;
+
+
+&lt;p&gt;Without method chaining, to call both bar and baz in turn, on the object foo, we would do this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;# Fragment 1
+foo.bar() # Call method bar() on object foo.
+foo.baz() # Call method baz() on object foo.
+&lt;/pre&gt;
+
+
+&lt;p&gt;With method chaining, we can this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;# Fragment 2
+# Chain calls to methods bar() and baz() on object foo.
+foo.bar().baz()
+&lt;/pre&gt;
+
+
+&lt;/blockquote&gt;
+&lt;p&gt;So the claim for method cascading then is:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;One advantage of method chaining is that it reduces the number of times you
+have to use the name of the object: only once in Fragment 2 above, vs. twice
+in Fragment 1; and this difference will increase when there are more method
+calls on the same object. Thereby, it also slightly reduces the amount of code
+one has to read, understand, test, debug and maintain, overall.
+Not major benefits, but can be useful.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;So method cascading reduces the number of times you have to use the name of an
+object, but this makes it inherently less explicit that you're operating on the
+same object. Looking at &lt;code&gt;foo.bar().baz()&lt;/code&gt; does not tell me that &lt;code&gt;baz&lt;/code&gt; is being
+called on the same object as &lt;code&gt;bar&lt;/code&gt;. Unless you're keen on method cascading and
+use it yourself, it looks like the opposite.&lt;/p&gt;
+&lt;p&gt;Method cascading may therefore reduce&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;the amount of code one has to read, understand, test, debug and maintain, overall.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;However it does so, only in a "code-golf" way. There is no point in reducing
+the amount of code to understand if by doing so you increase the difficulty with
+which you can understand it.&lt;/p&gt;
+&lt;p&gt;A common example of method cascading is one Vasudev includes, that of string
+processing. Here we have a line such as (which I've translated into Python 3):&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;print ('After uppercase then capitalize:',
+        sp.dup().uppercase().capitalize().rep())
+&lt;/pre&gt;
+
+
+&lt;p&gt;Whilst it is quite nice to be able to do this in one line without using a new
+variable name, I would write this without method cascading as:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;duplicate = sp.dup()
+duplicate.uppercase()
+duplicate.capitalize()
+print('After uppercase then capitalize:', duplicate.rep())
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now it is obvious that &lt;code&gt;dup&lt;/code&gt; returns something new, in this case it is a
+duplicate of the original string. It is also clear that &lt;code&gt;uppercase&lt;/code&gt; and
+&lt;code&gt;capitalize&lt;/code&gt; do &lt;em&gt;not&lt;/em&gt; return new objects but modify the &lt;code&gt;duplicate&lt;/code&gt; object.&lt;/p&gt;
+&lt;p&gt;So, I'm afraid I just don't see the use case for cascading.&lt;/p&gt;&lt;/div&gt;</description><category>coding style</category><category>python</category><guid>http://allanderek.github.io/posts/method-cascading/</guid><pubDate>Tue, 23 Feb 2016 14:54:35 GMT</pubDate></item></channel></rss>

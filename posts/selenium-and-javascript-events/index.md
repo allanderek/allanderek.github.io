@@ -2,7 +2,7 @@
 .. title: Selenium and Javascript Events
 .. slug: selenium-and-javascript-events
 .. date: 2016-03-16 18:02:32 UTC
-.. tags:
+.. tags: python, selenium, testing
 .. category:
 .. link:
 .. description:

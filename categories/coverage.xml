@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet (coverage)</title><link>http://allanderek.github.io/</link><description></description><atom:link href="http://allanderek.github.io/categories/coverage.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Thu, 17 Mar 2016 11:25:26 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Update: Flask+Coverage</title><link>http://allanderek.github.io/posts/update-flask%2Bcoverage/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Update: Flask+Coverage Analysis&lt;/h2&gt;
+&lt;p&gt;In a &lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis"&gt;previous post&lt;/a&gt;
+I demonstrated how to get &lt;code&gt;coverage&lt;/code&gt; analysis working for a Flask web application
+in a relatively simple manner. In the section &lt;em&gt;"At then end of your tests"&lt;/em&gt; I
+stated that you needed your tests to clean-up by telling the server to shutdown.
+The end of your test code would look something like this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;finally&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;driver&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;get_url&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'shutdown'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="o"&gt;...&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;This could have made things a little fiddly since your test code would have to
+make sure to access the &lt;code&gt;shutdown&lt;/code&gt; route exactly once, regardless of how many
+tests were run.&lt;/p&gt;
+&lt;p&gt;However, I realised that we could remove the burden from the test code by
+simply doing this in &lt;code&gt;manage.py&lt;/code&gt; file.&lt;/p&gt;
+&lt;h3&gt;Updated &lt;code&gt;manage.py&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Previously, we had the following code within our &lt;code&gt;manage.py&lt;/code&gt; script within the
+&lt;code&gt;run_with_test_server&lt;/code&gt; method:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;test_process&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_command&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;test_process&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;wait&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;server_return_code&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;wait&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;We now update this to be:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;test_process&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_command&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;test_process&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;wait&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;application&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'TEST_SERVER_PORT'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;shutdown_url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'http://localhost:{}/shutdown'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;port&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;urlopen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;shutdown_url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;bytes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()))&lt;/span&gt;
+&lt;span class="n"&gt;server_return_code&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;wait&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Doing so means you can just write your tests without any need to worry about
+shutting down the server.
+The &lt;a href="https://github.com/allanderek/flask-coverage-example"&gt;example repository&lt;/a&gt;
+has been appropriately updated.&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>http://allanderek.github.io/posts/update-flask%2Bcoverage/</guid><pubDate>Tue, 26 Jan 2016 14:59:44 GMT</pubDate></item><item><title>Flask + Coverage Analysis</title><link>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Flask + Coverage Analysis&lt;/h2&gt;
+&lt;p&gt;This post demonstrates a simple web application written in Flask with coverage
+analysis for the tests. The main idea should be pretty translatable into most
+Python web application frameworks.&lt;/p&gt;
+&lt;h4&gt;Update&lt;/h4&gt;
+&lt;p&gt;I've updated this scheme and described the update &lt;a href="http://allanderek.github.io/posts/update-flask%2Bcoverage"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;tl;dr&lt;/h3&gt;
+&lt;p&gt;If you're having difficulty getting coverage analysis to work with Flask then
+have a look at my &lt;a href="https://github.com/allanderek/flask-coverage-example"&gt;example repository&lt;/a&gt;.
+The main take away is that you simply start the server in a process of its own
+using &lt;code&gt;coverage&lt;/code&gt; to start it. However, in order for this to work you have to
+make sure you can shut the server process down from the test process. To do this
+we simply add a new "shutdown" route which is only available under testing. Your
+test code, whether written in Python or, say Javascript, can then make a request
+to this "shutdown" route once it completes its tests. This allows the server
+process to shutdown naturally and therefore allow 'coverage' to complete.&lt;/p&gt;
+&lt;h3&gt;Introduction&lt;/h3&gt;
+&lt;p&gt;It's a good idea to test the web applications you author. Most web application
+frameworks provide relatively solid means to do this. However, if you're doing
+browser automated functional tests against a live server I've found that getting
+&lt;a href="https://pypi.python.org/pypi/coverage"&gt;coverage&lt;/a&gt; to work to be non-trivial. A quick search will reveal similar
+difficulties such as &lt;a href="http://stackoverflow.com/questions/23745370/setting-up-coverage-py-with-flask"&gt;this&lt;/a&gt;
+stack overflow question, which ultimately points to the &lt;a href="http://coverage.readthedocs.org/en/latest/subprocess.html"&gt;coverage documentation
+on sub-processes&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Part of the reason for this might be that the Flask-Testing extension provides
+live server testing class that starts your server in testing mode as part of
+the start-up of the test. It then also shuts the server process down, but in
+so doing does not allow coverage to complete.&lt;/p&gt;
+&lt;p&gt;A simpler method is to start the server process yourself under coverage. You
+then only need a means to shutdown the server programatically. I do this by
+adding a &lt;code&gt;shutdown&lt;/code&gt; route.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</guid><pubDate>Mon, 25 Jan 2016 15:20:50 GMT</pubDate></item></channel></rss>

@@ -21,6 +21,10 @@ I demonstrated how to get coverage analysis working for a Flask web application
 in a relatively simple manner. In the section "At then end of your te'>
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-01-26T14:59:44Z">
+<meta property="article:tag" content="coverage">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="selenium">
+<meta property="article:tag" content="testing">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -103,8 +107,8 @@ I demonstrated how to get <code>coverage</code> analysis working for a Flask web
 in a relatively simple manner. In the section <em>"At then end of your tests"</em> I
 stated that you needed your tests to clean-up by telling the server to shutdown.
 The end of your test code would look something like this:</p>
-<pre class="code literal-block"><span class="k">finally</span><span class="p">:</span>
-    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s">'shutdown'</span><span class="p">))</span>
+<pre class="code literal-block"><span></span><span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s1">'shutdown'</span><span class="p">))</span>
     <span class="o">...</span>
 </pre>
 
@@ -118,17 +122,17 @@ simply doing this in <code>manage.py</code> file.</p>
 </h3>
 <p>Previously, we had the following code within our <code>manage.py</code> script within the
 <code>run_with_test_server</code> method:</p>
-<pre class="code literal-block"><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+<pre class="code literal-block"><span></span><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
 <span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 <span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 </pre>
 
 
 <p>We now update this to be:</p>
-<pre class="code literal-block"><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+<pre class="code literal-block"><span></span><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
 <span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'TEST_SERVER_PORT'</span><span class="p">]</span>
-<span class="n">shutdown_url</span> <span class="o">=</span> <span class="s">'http://localhost:{}/shutdown'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+<span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+<span class="n">shutdown_url</span> <span class="o">=</span> <span class="s1">'http://localhost:{}/shutdown'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">shutdown_url</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
 <span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
@@ -141,7 +145,13 @@ The <a href="https://github.com/allanderek/flask-coverage-example">example repos
 has been appropriately updated.</p>
 </div>
     </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/coverage/" rel="tag">coverage</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+            <li><a class="tag p-category" href="../../categories/selenium/" rel="tag">selenium</a></li>
+            <li><a class="tag p-category" href="../../categories/testing/" rel="tag">testing</a></li>
+        </ul>
+<ul class="pager hidden-print">
 <li class="previous">
                 <a href="../flask-%2B-coverage-analysis/" rel="prev" title="Flask + Coverage Analysis">Previous post</a>
             </li>

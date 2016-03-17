@@ -2,7 +2,7 @@
 .. title: Method Cascading
 .. slug: method-cascading
 .. date: 2016-02-23 14:54:35 UTC
-.. tags:
+.. tags: python, coding style
 .. category:
 .. link:
 .. description:

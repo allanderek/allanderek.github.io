@@ -2,7 +2,7 @@
 .. title: Test First and Mutation Testing
 .. slug: test-first-mutation-testing
 .. date: 2016-02-19 10:14:43 UTC
-.. tags:
+.. tags: python, testing, mutation testing, scc
 .. category:
 .. link:
 .. description:

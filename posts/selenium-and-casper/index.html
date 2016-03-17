@@ -20,6 +20,10 @@ So you wish to do a full user test by automating the browser. Should you use
 the Python bindings to Selenium or CasperJS? In ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-01-08T11:11:40Z">
+<meta property="article:tag" content="casperjs">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="selenium">
+<meta property="article:tag" content="testing">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -123,7 +127,7 @@ tests.</p>
 money the Python code is a bit easier. The CasperJS code is muddied somewhat
 because for each step in the navigation you are obliged to pass in a callback
 function, hence a lot of your test code looks something like (in Coffeescript):</p>
-<pre class="code literal-block">casper.thenOpen (@get_url '/welcome'), -&gt;
+<pre class="code literal-block"><span></span>casper.thenOpen (@get_url '/welcome'), -&gt;
   test.assertSelectorHasText 'h1.main-title' 'Welcome to My Homepage'
 </pre>
 
@@ -168,7 +172,13 @@ drawbacks. Which one you choose will depend entirely on the application that
 you have in mind and doing a little both is quite possibly the best solution.</p>
 </div>
     </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/casperjs/" rel="tag">casperjs</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+            <li><a class="tag p-category" href="../../categories/selenium/" rel="tag">selenium</a></li>
+            <li><a class="tag p-category" href="../../categories/testing/" rel="tag">testing</a></li>
+        </ul>
+<ul class="pager hidden-print">
 <li class="previous">
                 <a href="../welcome/" rel="prev" title="Welcome">Previous post</a>
             </li>

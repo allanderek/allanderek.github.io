@@ -21,6 +21,10 @@ analysis for the tests. The main idea should be pretty translatable into most
 Python web applic">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-01-25T15:20:50Z">
+<meta property="article:tag" content="coverage">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="selenium">
+<meta property="article:tag" content="testing">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -134,10 +138,10 @@ adding a <code>shutdown</code> route.</p>
 <p>If you just wish to look at the code check out the
 <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.</p>
 <p>The README should explain how to work this but roughly:</p>
-<pre class="code literal-block">    <span class="nv">$ </span>git clone https://github.com/allanderek/flask-coverage-example.git
-    <span class="nv">$ </span><span class="nb">cd </span>flask-coverage-example
-    <span class="nv">$ </span>. setup.fish <span class="c"># or source setup.sh</span>
-    <span class="nv">$ </span>python manage.py <span class="nb">test</span>
+<pre class="code literal-block"><span></span>    $ git clone https://github.com/allanderek/flask-coverage-example.git
+    $ <span class="nb">cd</span> flask-coverage-example
+    $ . setup.fish <span class="c1"># or source setup.sh</span>
+    $ python manage.py <span class="nb">test</span>
 </pre>
 
 
@@ -145,11 +149,11 @@ adding a <code>shutdown</code> route.</p>
 marked-up with all the lines ran. Specially open the file
 <code>htmlcov/app_main_py.html</code>.</p>
 <p>To see an example of a missing line, locate the lines:</p>
-<pre class="code literal-block">    <span class="k">try</span><span class="p">:</span>
-        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">'50 of 100 is 50%'</span><span class="p">)</span>
-        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'20 of 30 is 66%'</span><span class="p">)</span>
-        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s">'Invalid: Fraction greater than Total'</span><span class="p">)</span>
-        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'0 of 0 is 0%'</span><span class="p">)</span>
+<pre class="code literal-block"><span></span>    <span class="k">try</span><span class="p">:</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">'50 of 100 is 50%'</span><span class="p">)</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">'20 of 30 is 66%'</span><span class="p">)</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">'Invalid: Fraction greater than Total'</span><span class="p">)</span>
+        <span class="n">check_fraction</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'0 of 0 is 0%'</span><span class="p">)</span>
 </pre>
 
 
@@ -176,19 +180,19 @@ instance if you want to write your browser tests in Javascript.</p>
 </li>
 </ul>
 <p>In a simpler form to that in the example repository this would be:</p>
-<pre class="code literal-block">    <span class="kn">import</span> <span class="nn">subprocess</span>
-    <span class="n">server_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'coverage'</span><span class="p">,</span> <span class="s">'run'</span><span class="p">,</span> <span class="s">'--source'</span><span class="p">,</span> <span class="s">'app.main'</span><span class="p">,</span>
-                      <span class="s">'manage.py'</span><span class="p">,</span> <span class="s">'run_test_server'</span><span class="p">]</span>
+<pre class="code literal-block"><span></span>    <span class="kn">import</span> <span class="nn">subprocess</span>
+    <span class="n">server_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'coverage'</span><span class="p">,</span> <span class="s1">'run'</span><span class="p">,</span> <span class="s1">'--source'</span><span class="p">,</span> <span class="s1">'app.main'</span><span class="p">,</span>
+                      <span class="s1">'manage.py'</span><span class="p">,</span> <span class="s1">'run_test_server'</span><span class="p">]</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">server_command</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">server</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">b</span><span class="s">' * Running on'</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">b</span><span class="s1">' * Running on'</span><span class="p">):</span>
             <span class="k">break</span>
-    <span class="n">test_command</span> <span class="o">=</span> <span class="p">[</span><span class="s">'pytest'</span><span class="p">,</span> <span class="s">'app/main.py'</span><span class="p">]</span>
+    <span class="n">test_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'pytest'</span><span class="p">,</span> <span class="s1">'app/main.py'</span><span class="p">]</span>
     <span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
     <span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
     <span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"coverage report -m"</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"coverage html"</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"coverage report -m"</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"coverage html"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">server_return_code</span>
 </pre>
 
@@ -197,33 +201,33 @@ instance if you want to write your browser tests in Javascript.</p>
 <p>Notice that the above <strong>waits</strong> for the server process to end. Ordinarily the
 server process has to be killed since it expects to run indefinitely. To solve
 that we add a <code>shutdown</code> route. This is done in <code>manage.py</code>:</p>
-<pre class="code literal-block"><span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
     <span class="sd">"""Shutdown the Werkzeug dev server, if we're using it.</span>
 <span class="sd">    From http://flask.pocoo.org/snippets/67/"""</span>
-    <span class="n">func</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'werkzeug.server.shutdown'</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># pragma: no cover</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">'Not running with the Werkzeug Server'</span><span class="p">)</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'werkzeug.server.shutdown'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Not running with the Werkzeug Server'</span><span class="p">)</span>
     <span class="n">func</span><span class="p">()</span>
-    <span class="k">return</span> <span class="s">'Server shutting down...'</span>
+    <span class="k">return</span> <span class="s1">'Server shutting down...'</span>
 
 
 <span class="nd">@manager.command</span>
 <span class="k">def</span> <span class="nf">run_test_server</span><span class="p">():</span>
     <span class="sd">"""Used by the phantomjs tests to run a live testing server"""</span>
-    <span class="c"># running the server in debug mode during testing fails for some reason</span>
-    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'DEBUG'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'TESTING'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'TEST_SERVER_PORT'</span><span class="p">]</span>
-    <span class="c"># Don't use the production database but a temporary test database.</span>
-    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'SQLALCHEMY_DATABASE_URI'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"sqlite:///test.db"</span>
+    <span class="c1"># running the server in debug mode during testing fails for some reason</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'DEBUG'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TESTING'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+    <span class="c1"># Don't use the production database but a temporary test database.</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'SQLALCHEMY_DATABASE_URI'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"sqlite:///test.db"</span>
     <span class="n">database</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
     <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="c"># Add a route that allows the test code to shutdown the server, this allows</span>
-    <span class="c"># us to quit the server without killing the process thus enabling coverage</span>
-    <span class="c"># to work.</span>
-    <span class="n">application</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s">'/shutdown'</span><span class="p">,</span> <span class="s">'shutdown'</span><span class="p">,</span> <span class="n">shutdown</span><span class="p">,</span>
-                             <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'POST'</span><span class="p">,</span> <span class="s">'GET'</span><span class="p">])</span>
+    <span class="c1"># Add a route that allows the test code to shutdown the server, this allows</span>
+    <span class="c1"># us to quit the server without killing the process thus enabling coverage</span>
+    <span class="c1"># to work.</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">'/shutdown'</span><span class="p">,</span> <span class="s1">'shutdown'</span><span class="p">,</span> <span class="n">shutdown</span><span class="p">,</span>
+                             <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">'POST'</span><span class="p">,</span> <span class="s1">'GET'</span><span class="p">])</span>
 
     <span class="n">application</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">use_reloader</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
@@ -241,8 +245,8 @@ it means the routes are only ever added at all when we start the test server.</p
 <p>For many test strategies you will want to do something before and after the
 server runs. In this example we setup the database to use a temporary database,
 in which we create all of the tables anew:</p>
-<pre class="code literal-block">    <span class="c"># Don't use the production database but a temporary test database.</span>
-    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">'SQLALCHEMY_DATABASE_URI'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"sqlite:///test.db"</span>
+<pre class="code literal-block"><span></span>    <span class="c1"># Don't use the production database but a temporary test database.</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'SQLALCHEMY_DATABASE_URI'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"sqlite:///test.db"</span>
     <span class="n">database</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
     <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre>
@@ -250,7 +254,7 @@ in which we create all of the tables anew:</p>
 
 <p>At the end of the test we remove the database session and drop all of the
 contents of the database.</p>
-<pre class="code literal-block">    <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+<pre class="code literal-block"><span></span>    <span class="n">database</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
     <span class="n">database</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
 </pre>
 
@@ -265,8 +269,8 @@ example as I could.</p>
 the <code>shutdown</code> route. There are many ways to write this and it will hugely
 depend on your test framework. However, in the example repository it is done
 via:</p>
-<pre class="code literal-block"><span class="k">finally</span><span class="p">:</span>
-    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s">'shutdown'</span><span class="p">))</span>
+<pre class="code literal-block"><span></span><span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s1">'shutdown'</span><span class="p">))</span>
     <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre>
 
@@ -277,7 +281,13 @@ required at all.</p>
 <p>Go see the <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.</p>
 </div>
     </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/coverage/" rel="tag">coverage</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+            <li><a class="tag p-category" href="../../categories/selenium/" rel="tag">selenium</a></li>
+            <li><a class="tag p-category" href="../../categories/testing/" rel="tag">testing</a></li>
+        </ul>
+<ul class="pager hidden-print">
 <li class="previous">
                 <a href="../selenium-and-casper/" rel="prev" title="Selenium vs CasperJS">Previous post</a>
             </li>

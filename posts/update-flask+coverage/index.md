@@ -2,7 +2,7 @@
 .. title: Update: Flask+Coverage
 .. slug: update-flask+coverage
 .. date: 2016-01-26 14:59:44 UTC
-.. tags:
+.. tags: python, selenium, testing, coverage
 .. category:
 .. link:
 .. description:
