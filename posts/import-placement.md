@@ -2,7 +2,7 @@
 .. title: Placement of Python Import Statements
 .. slug: import-placement
 .. date: 2016-02-03 13:08:54 UTC
-.. tags:
+.. tags: python
 .. category:
 .. link:
 .. description:

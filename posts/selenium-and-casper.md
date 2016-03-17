@@ -2,7 +2,7 @@
 .. title: Selenium vs CasperJS
 .. slug: selenium-and-casper
 .. date: 2016-01-08 11:11:40 UTC
-.. tags:
+.. tags: python, selenium, testing, casperjs
 .. category:
 .. link:
 .. description:
