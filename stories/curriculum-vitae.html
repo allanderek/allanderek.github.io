@@ -42,6 +42,9 @@
   background-color: #AACBE0;
 }
 
+.more-information {
+    display:none;
+}
 </style>
 <div id="page-container">
   <div id="main-title">
@@ -70,9 +73,33 @@
     <ul>
       <li>Developed a new programming language and an associated compiler with
           features to aid in the correction of programming errors.
+          <a href="#" class="reveal-more-link">more ...</a>
+          <div class="more-information">
+            During my PhD I developed a new programming language named Nitro.
+            The purpose of Nitro was to bridge the gap between applications
+            programming languages and the system programming languages that are
+            used to provide the runtime services, such as automatic memory
+            management, for these application languages. To do this Nitro allows
+            the user to not only specify types but how those types are represented
+            in memory. Because such memory representations are formally specified
+            the type-checker can then ensure that they are used correctly.
+            As part of my PhD I developed the language, specified in formally in
+            structural operational semantics, proved some useful properties that
+            the language has, developed a stable compiler for the Nitro language,
+            and used it to write some software such as a text editor which used
+            the NCurses library directly without any need to marshal the native
+            NCurses data types into a Nitro data type.
+            <a href="#" class="reveal-less-link">less ...</a>
+          </div>
           </li>
       <li>High-level problem solving research experience, dependent on the
           development of software for other users with complex requirements.
+          <a href="#" class="reveal-more-link">more ...</a>
+          <div class="more-information">
+            <p>I was involved in the <a href="http://www.dcs.ed.ac.uk/pepa">PEPA research group.</a>
+            </p>
+            <a href="#" class="reveal-less-link">less ...</a>
+          </div>
           </li>
       <li>Developed several individual and team based software projects related
           to formal analysis of models written in a process algebra which were
@@ -253,3 +280,22 @@ Winter Simulation Conference 2010: 620-630</li>
       </ul>
   </div> <!--/#publications -->
 </div><!-- /#page-container -->
+<script>
+window.onload = function() {
+  var reveal_links = document.getElementsByClassName("reveal-more-link");
+  Array.prototype.forEach.call(reveal_links, function (a){
+    // var target = document.getElementById(a.getAttribute("data-target"));
+    var targets = a.parentElement.getElementsByClassName("more-information");
+    Array.prototype.forEach.call(targets, function(target){
+      a.onclick = function() { target.style.display="inline-block";
+                               a.style.display="none"; };
+      var show_less_links = target.getElementsByClassName("reveal-less-link")
+      Array.prototype.forEach.call(show_less_links, function(less){
+        less.onclick = function() { target.style.display="none";
+                                    a.style.display="inline"; };
+      });
+    });
+  });
+
+};
+</script>
