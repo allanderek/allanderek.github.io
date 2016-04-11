@@ -125,6 +125,9 @@
   background-color: #AACBE0;
 }
 
+.more-information {
+    display:none;
+}
 </style>
 <div id="page-container">
   <div id="main-title">
@@ -156,15 +159,81 @@
     <ul>
 <li>Developed a new programming language and an associated compiler with
           features to aid in the correction of programming errors.
+          <a href="." class="reveal-more-link">more ...</a>
+          <div class="more-information">
+            <p>
+            During my PhD I developed a new programming language named Nitro.
+            The purpose of Nitro was to bridge the gap between applications
+            programming languages and the system programming languages that are
+            used to provide the runtime services, such as automatic memory
+            management, for these application languages. To do this Nitro allows
+            the user to not only specify types but how those types are represented
+            in memory. Because such memory representations are formally specified
+            the type-checker can then ensure that they are used correctly.
+            As part of my PhD I developed the language, specified in formally in
+            structural operational semantics, proved some useful properties that
+            the language has, developed a stable compiler for the Nitro language,
+            and used it to write some software such as a text editor which used
+            the NCurses library directly without any need to marshal the native
+            NCurses data types into a Nitro data type.
+            </p>
+            <a href="." class="reveal-less-link">less ...</a>
+          </div>
           </li>
       <li>High-level problem solving research experience, dependent on the
           development of software for other users with complex requirements.
+          <a href="." class="reveal-more-link">more ...</a>
+          <div class="more-information">
+            <p>I was involved in the <a href="http://www.dcs.ed.ac.uk/pepa">PEPA research group.</a>
+               PEPA is a language for expressing mathematical models of systems, which is used to
+               investigate properties of many different kinds of systems from server-client systems,
+               distributed systems, epidemiology processes, and the modelling of crowds. Bio-PEPA is
+               a varient of PEPA particularly suitable for systems biology modelling. Users typically
+               create a model of the system under investigation and then ask performance related queries
+               such as: <i>What is the average number of waiting customers?</i> or <i>What is the
+               probability that a request has been served within a given time constraint?</i>
+            </p>
+            <p>My work was mostly involved in the development of solution techniques and the development
+               of software to realise those solution techniques. In addition I worked on the difficult problem
+               of designing a sound and useful language for the user to specify their query. I also
+               worked on extensions to the modelling languages themselves and techniques to analyse models for
+               modelling errors, in a similar way that static code analysis analyses software code for possible
+               programming errors.
+            </p>
+            <a href="." class="reveal-less-link">less ...</a>
+          </div>
           </li>
       <li>Developed several individual and team based software projects related
           to formal analysis of models written in a process algebra which were
           used by researchers from across the globe.
           </li>
       <li>Ability to understand and improve existing software projects.
+        <a href="." class="reveal-more-link">more ...</a>
+        <div class="more-information">
+          <p> I have taken over the development and/or joined the development
+              team on several projects in a variety of programming languages,
+              for example:
+              </p>
+<ul>
+<li>I took on the development of the Imperial PEPA Compiler written in
+                      Haskell and completely revamped the project such that it was
+                      re-named the International PEPA compiler and published as library,
+                      its source code can be found
+                      <a href="https://github.com/allanderek/ipclib">here</a>.
+                    </li>
+                  <li>I joined the development teams on both Eclipse plug-ins for
+                      the PEPA and Bio-PEPA languages. These projects are written
+                      Java and their related source code repositories can be found
+                      <a href="https://github.com/allanderek/pepa">here</a> and
+                      <a href="https://github.com/allanderek/Bio-PEPA">here</a>.
+                    </li>
+                  <li>I joined the <a href="http://www.sbsi.ed.ac.uk/">SBSI</a>
+                      development team, mostly working on the
+                      SBSI-numerics component written in C++.
+                    </li>
+                </ul>
+<a href="." class="reveal-less-link">less ...</a>
+        </div>
           </li>
       <li>An award-winning teacher with a diverse publication record of over 30
           articles; a proven track record of understanding and communicating
@@ -345,7 +414,26 @@ Winter Simulation Conference 2010: 620-630</li>
 </div> <!--/#publications -->
 </div>
 <!-- /#page-container -->
-    </div>
+<script>
+window.onload = function() {
+  var reveal_links = document.getElementsByClassName("reveal-more-link");
+  Array.prototype.forEach.call(reveal_links, function (a){
+    // var target = document.getElementById(a.getAttribute("data-target"));
+    var targets = a.parentElement.getElementsByClassName("more-information");
+    Array.prototype.forEach.call(targets, function(target){
+      a.onclick = function() { target.style.display="inline-block";
+                               a.style.display="none"; };
+      var show_less_links = target.getElementsByClassName("reveal-less-link")
+      Array.prototype.forEach.call(show_less_links, function(less){
+        less.onclick = function() { target.style.display="none";
+                                    a.style.display="inline"; };
+      });
+    });
+  });
+
+};
+</script>
+</div>
     
 
 </article>
