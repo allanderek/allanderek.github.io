@@ -128,6 +128,11 @@
 .more-information {
     display:none;
 }
+
+/* This is included because the more/less links do not use href tags and hence
+   would not otherwise look like links for the user */
+a { cursor: pointer; color: blue; }
+a:hover,a.hover { text-decoration: underline; }
 </style>
 <div id="page-container">
   <div id="main-title">
@@ -159,7 +164,7 @@
     <ul>
 <li>Developed a new programming language and an associated compiler with
           features to aid in the correction of programming errors.
-          <a href="." class="reveal-more-link">more ...</a>
+          <a class="reveal-more-link">more ...</a>
           <div class="more-information">
             <p>
             During my PhD I developed a new programming language named Nitro.
@@ -177,12 +182,12 @@
             the NCurses library directly without any need to marshal the native
             NCurses data types into a Nitro data type.
             </p>
-            <a href="." class="reveal-less-link">less ...</a>
+            <a class="reveal-less-link">less ...</a>
           </div>
           </li>
       <li>High-level problem solving research experience, dependent on the
           development of software for other users with complex requirements.
-          <a href="." class="reveal-more-link">more ...</a>
+          <a class="reveal-more-link">more ...</a>
           <div class="more-information">
             <p>I was involved in the <a href="http://www.dcs.ed.ac.uk/pepa">PEPA research group.</a>
                PEPA is a language for expressing mathematical models of systems, which is used to
@@ -200,7 +205,7 @@
                modelling errors, in a similar way that static code analysis analyses software code for possible
                programming errors.
             </p>
-            <a href="." class="reveal-less-link">less ...</a>
+            <a class="reveal-less-link">less ...</a>
           </div>
           </li>
       <li>Developed several individual and team based software projects related
@@ -208,7 +213,7 @@
           used by researchers from across the globe.
           </li>
       <li>Ability to understand and improve existing software projects.
-        <a href="." class="reveal-more-link">more ...</a>
+        <a class="reveal-more-link">more ...</a>
         <div class="more-information">
           <p> I have taken over the development and/or joined the development
               team on several projects in a variety of programming languages,
@@ -232,7 +237,7 @@
                       SBSI-numerics component written in C++.
                     </li>
                 </ul>
-<a href="." class="reveal-less-link">less ...</a>
+<a class="reveal-less-link">less ...</a>
         </div>
           </li>
       <li>An award-winning teacher with a diverse publication record of over 30
