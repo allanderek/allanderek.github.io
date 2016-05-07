@@ -18,12 +18,16 @@
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>http://allanderek.github.io/categories/dynamically-typed-languages.xml</loc>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>http://allanderek.github.io/categories/mutation-testing.xml</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://allanderek.github.io/categories/python.xml</loc>
-  <lastmod>2016-03-17T11:25:00Z</lastmod>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://allanderek.github.io/categories/scc.xml</loc>
@@ -34,15 +38,23 @@
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>http://allanderek.github.io/categories/statically-typed-languages.xml</loc>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>http://allanderek.github.io/categories/testing.xml</loc>
-  <lastmod>2016-03-17T11:25:00Z</lastmod>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://allanderek.github.io/categories/typing.xml</loc>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://allanderek.github.io/rss.xml</loc>
-  <lastmod>2016-03-17T11:25:00Z</lastmod>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2016-03-17T11:25:00Z</lastmod>
+  <lastmod>2016-05-07T11:21:00Z</lastmod>
  </sitemap>
 </sitemapindex>
