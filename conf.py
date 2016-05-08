@@ -21,10 +21,10 @@ BLOG_AUTHOR = "Allan Clark"  # (translatable)
 BLOG_TITLE = "Coding Diet"  # (translatable)
 # This is the main URL for your site. It will be used
 # in a prominent link. Don't forget the protocol (http/https)!
-SITE_URL = "http://allanderek.github.io/"
+SITE_URL = "https://allanderek.github.io/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
-# BASE_URL = "http://allanderek.github.io/"
+# BASE_URL = "https://allanderek.github.io/"
 BLOG_EMAIL = "allan.clark@gmail.com"
 BLOG_DESCRIPTION = "My quest to stop writing too much code."  # (translatable)
 
