@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Coding Diet (python)</title><link>http://allanderek.github.io/</link><description></description><atom:link type="application/rss+xml" href="http://allanderek.github.io/categories/python.xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sat, 07 May 2016 11:25:13 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>In what ways are dynamically typed languages more productive?</title><link>http://allanderek.github.io/posts/dynamically-typed-languages-why/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Introduction&lt;/h2&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet (python)</title><link>https://allanderek.github.io/</link><description></description><atom:link href="https://allanderek.github.io/categories/python.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 08 May 2016 18:44:02 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>In what ways are dynamically typed languages more productive?</title><link>https://allanderek.github.io/posts/dynamically-typed-languages-why/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;I do not aim to answer the question in the title more raise the question.
 The question kind of implies that dynamically typed languages are more
 productive in at least some ways. It does not imply that statically typed
@@ -199,8 +199,8 @@ your tests. Secondly you can deploy different static analysers for
 different problems. For example a statically typed language has to
 decide whether or not to include exceptions in types. A dynamically
 typed language can easily offer both. I suppose a statically typed
-language &lt;em&gt;could&lt;/em&gt; offer both as well.&lt;/p&gt;&lt;/div&gt;</description><category>dynamically typed languages</category><category>python</category><category>statically typed languages</category><category>testing</category><category>typing</category><guid>http://allanderek.github.io/posts/dynamically-typed-languages-why/</guid><pubDate>Wed, 04 May 2016 19:41:57 GMT</pubDate></item><item><title>Selenium and Javascript Events</title><link>http://allanderek.github.io/posts/selenium-and-javascript-events/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Selenium is a great way to test web applications and it has Python bindings.
-I explained in a &lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis"&gt;previous post&lt;/a&gt; how to
+language &lt;em&gt;could&lt;/em&gt; offer both as well.&lt;/p&gt;&lt;/div&gt;</description><category>dynamically typed languages</category><category>python</category><category>statically typed languages</category><category>testing</category><category>typing</category><guid>https://allanderek.github.io/posts/dynamically-typed-languages-why/</guid><pubDate>Wed, 04 May 2016 19:41:57 GMT</pubDate></item><item><title>Selenium and Javascript Events</title><link>https://allanderek.github.io/posts/selenium-and-javascript-events/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Selenium is a great way to test web applications and it has Python bindings.
+I explained in a &lt;a href="https://allanderek.github.io/posts/flask-%2B-coverage-analysis"&gt;previous post&lt;/a&gt; how to
 set this up with coverage analysis.&lt;/p&gt;
 &lt;p&gt;However, writing tests is non-trivial, in particular it is easy enough to write
 tests that suffer from race conditions. Suppose you write a test that includes
@@ -317,7 +317,7 @@ can allow your Selenium tests to synchronise, that is, wait for the correct time
 to check the results of a Javascript event.&lt;/p&gt;
 &lt;p&gt;This can solve problems of getting a &lt;code&gt;StaleElementReferenceException&lt;/code&gt; or a
 &lt;code&gt;NoSuchElementException&lt;/code&gt; because your Selenium test is running a check on an
-element too early before your page has been updated.&lt;/p&gt;&lt;/div&gt;</description><category>python</category><category>selenium</category><category>testing</category><guid>http://allanderek.github.io/posts/selenium-and-javascript-events/</guid><pubDate>Wed, 16 Mar 2016 18:02:32 GMT</pubDate></item><item><title>Method Cascading</title><link>http://allanderek.github.io/posts/method-cascading/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Method Cascading&lt;/h2&gt;
+element too early before your page has been updated.&lt;/p&gt;&lt;/div&gt;</description><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/selenium-and-javascript-events/</guid><pubDate>Wed, 16 Mar 2016 18:02:32 GMT</pubDate></item><item><title>Method Cascading</title><link>https://allanderek.github.io/posts/method-cascading/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Method Cascading&lt;/h2&gt;
 &lt;p&gt;Vasudev Ram has a thoughful &lt;a href="http://jugad2.blogspot.co.uk/2016/02/examples-of-method-chaining-in-python.html"&gt;post about method chaining/cascading&lt;/a&gt;
 that I picked up from &lt;a href="http://planetpython.org/"&gt;planet python&lt;/a&gt; in which he
 basically argues for the use of method cascading. I'm going to disagree.
@@ -395,7 +395,7 @@ print('After uppercase then capitalize:', duplicate.rep())
 &lt;p&gt;Now it is obvious that &lt;code&gt;dup&lt;/code&gt; returns something new, in this case it is a
 duplicate of the original string. It is also clear that &lt;code&gt;uppercase&lt;/code&gt; and
 &lt;code&gt;capitalize&lt;/code&gt; do &lt;em&gt;not&lt;/em&gt; return new objects but modify the &lt;code&gt;duplicate&lt;/code&gt; object.&lt;/p&gt;
-&lt;p&gt;So, I'm afraid I just don't see the use case for cascading.&lt;/p&gt;&lt;/div&gt;</description><category>coding style</category><category>python</category><guid>http://allanderek.github.io/posts/method-cascading/</guid><pubDate>Tue, 23 Feb 2016 14:54:35 GMT</pubDate></item><item><title>Test First and Mutation Testing</title><link>http://allanderek.github.io/posts/test-first-mutation-testing/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Test First and Mutation Testing&lt;/h2&gt;
+&lt;p&gt;So, I'm afraid I just don't see the use case for cascading.&lt;/p&gt;&lt;/div&gt;</description><category>coding style</category><category>python</category><guid>https://allanderek.github.io/posts/method-cascading/</guid><pubDate>Tue, 23 Feb 2016 14:54:35 GMT</pubDate></item><item><title>Test First and Mutation Testing</title><link>https://allanderek.github.io/posts/test-first-mutation-testing/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Test First and Mutation Testing&lt;/h2&gt;
 &lt;p&gt;I'm going to argue that mutation testing has a strong use in a test first
 development environment and I'll conclude by proposing a mechanism to link
 mutation testing to the source code control mechanism to further aid test first
@@ -460,7 +460,7 @@ a display of existing calculations.&lt;/p&gt;
     false assurance that your test can fail.&lt;/li&gt;
 &lt;li&gt;Integrating source code control to target the mutations towards new code
     could improve this significantly, or at least make it a bit more convenient.&lt;/li&gt;
-&lt;/ul&gt;&lt;/div&gt;</description><category>mutation testing</category><category>python</category><category>scc</category><category>testing</category><guid>http://allanderek.github.io/posts/test-first-mutation-testing/</guid><pubDate>Fri, 19 Feb 2016 10:14:43 GMT</pubDate></item><item><title>Placement of Python Import Statements</title><link>http://allanderek.github.io/posts/import-placement/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;&lt;a href="https://www.python.org/dev/peps/pep-0008/#imports"&gt;Pep 8 specifies&lt;/a&gt;
+&lt;/ul&gt;&lt;/div&gt;</description><category>mutation testing</category><category>python</category><category>scc</category><category>testing</category><guid>https://allanderek.github.io/posts/test-first-mutation-testing/</guid><pubDate>Fri, 19 Feb 2016 10:14:43 GMT</pubDate></item><item><title>Placement of Python Import Statements</title><link>https://allanderek.github.io/posts/import-placement/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;&lt;a href="https://www.python.org/dev/peps/pep-0008/#imports"&gt;Pep 8 specifies&lt;/a&gt;
 that all import statements should be "put at the top of the file, just after any
 module comments and docstrings, and before module globals and constants."
 However, it does not really specify the logic behind this. I'm going to try to
@@ -473,8 +473,8 @@ that it is important to "know when to be inconsistent -- sometimes the style gui
 apply. When in doubt, use your best judgment". So the purpose of this post is to
 suggest some reasons why you might deviate from the style guide with respect to
 &lt;code&gt;import&lt;/code&gt; statements at the top.&lt;/p&gt;
-&lt;p&gt;&lt;a href="http://allanderek.github.io/posts/import-placement/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>python</category><guid>http://allanderek.github.io/posts/import-placement/</guid><pubDate>Wed, 03 Feb 2016 13:08:54 GMT</pubDate></item><item><title>Update: Flask+Coverage</title><link>http://allanderek.github.io/posts/update-flask%2Bcoverage/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Update: Flask+Coverage Analysis&lt;/h2&gt;
-&lt;p&gt;In a &lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis"&gt;previous post&lt;/a&gt;
+&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/import-placement/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>python</category><guid>https://allanderek.github.io/posts/import-placement/</guid><pubDate>Wed, 03 Feb 2016 13:08:54 GMT</pubDate></item><item><title>Update: Flask+Coverage</title><link>https://allanderek.github.io/posts/update-flask%2Bcoverage/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Update: Flask+Coverage Analysis&lt;/h2&gt;
+&lt;p&gt;In a &lt;a href="https://allanderek.github.io/posts/flask-%2B-coverage-analysis"&gt;previous post&lt;/a&gt;
 I demonstrated how to get &lt;code&gt;coverage&lt;/code&gt; analysis working for a Flask web application
 in a relatively simple manner. In the section &lt;em&gt;"At then end of your tests"&lt;/em&gt; I
 stated that you needed your tests to clean-up by telling the server to shutdown.
@@ -513,12 +513,12 @@ simply doing this in &lt;code&gt;manage.py&lt;/code&gt; file.&lt;/p&gt;
 &lt;p&gt;Doing so means you can just write your tests without any need to worry about
 shutting down the server.
 The &lt;a href="https://github.com/allanderek/flask-coverage-example"&gt;example repository&lt;/a&gt;
-has been appropriately updated.&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>http://allanderek.github.io/posts/update-flask%2Bcoverage/</guid><pubDate>Tue, 26 Jan 2016 14:59:44 GMT</pubDate></item><item><title>Flask + Coverage Analysis</title><link>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Flask + Coverage Analysis&lt;/h2&gt;
+has been appropriately updated.&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/update-flask%2Bcoverage/</guid><pubDate>Tue, 26 Jan 2016 14:59:44 GMT</pubDate></item><item><title>Flask + Coverage Analysis</title><link>https://allanderek.github.io/posts/flask-%2B-coverage-analysis/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Flask + Coverage Analysis&lt;/h2&gt;
 &lt;p&gt;This post demonstrates a simple web application written in Flask with coverage
 analysis for the tests. The main idea should be pretty translatable into most
 Python web application frameworks.&lt;/p&gt;
 &lt;h4&gt;Update&lt;/h4&gt;
-&lt;p&gt;I've updated this scheme and described the update &lt;a href="http://allanderek.github.io/posts/update-flask%2Bcoverage"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I've updated this scheme and described the update &lt;a href="https://allanderek.github.io/posts/update-flask%2Bcoverage"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;h3&gt;tl;dr&lt;/h3&gt;
 &lt;p&gt;If you're having difficulty getting coverage analysis to work with Flask then
 have a look at my &lt;a href="https://github.com/allanderek/flask-coverage-example"&gt;example repository&lt;/a&gt;.
@@ -544,7 +544,7 @@ so doing does not allow coverage to complete.&lt;/p&gt;
 &lt;p&gt;A simpler method is to start the server process yourself under coverage. You
 then only need a means to shutdown the server programatically. I do this by
 adding a &lt;code&gt;shutdown&lt;/code&gt; route.&lt;/p&gt;
-&lt;p&gt;&lt;a href="http://allanderek.github.io/posts/flask-%2B-coverage-analysis/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</guid><pubDate>Mon, 25 Jan 2016 15:20:50 GMT</pubDate></item><item><title>Selenium vs CasperJS</title><link>http://allanderek.github.io/posts/selenium-and-casper/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Suppose you have a web service using a Python web framework such as Flask.
+&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/flask-%2B-coverage-analysis/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/flask-%2B-coverage-analysis/</guid><pubDate>Mon, 25 Jan 2016 15:20:50 GMT</pubDate></item><item><title>Selenium vs CasperJS</title><link>https://allanderek.github.io/posts/selenium-and-casper/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Suppose you have a web service using a Python web framework such as Flask.
 So you wish to do a full user test by automating the browser. Should you use
 the Python bindings to Selenium or CasperJS? In this post I wish to detail some
 of the advantages and drawbacks of both.&lt;/p&gt;
@@ -564,4 +564,4 @@ but for now my sample project runs the casperJS tests in around 3 seconds whilst
 the Selenium ones take around 12 seconds to do the same amount of work. I'm not
 sure whether this is a constant factor or whether it will get worse with more
 tests.&lt;/p&gt;
-&lt;p&gt;&lt;a href="http://allanderek.github.io/posts/selenium-and-casper/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>casperjs</category><category>python</category><category>selenium</category><category>testing</category><guid>http://allanderek.github.io/posts/selenium-and-casper/</guid><pubDate>Fri, 08 Jan 2016 11:11:40 GMT</pubDate></item></channel></rss>
+&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/selenium-and-casper/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>casperjs</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/selenium-and-casper/</guid><pubDate>Fri, 08 Jan 2016 11:11:40 GMT</pubDate></item></channel></rss>

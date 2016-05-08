@@ -6,103 +6,103 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
-  <loc>http://allanderek.github.io/</loc>
+  <loc>https://allanderek.github.io/</loc>
   <lastmod>2016-01-06T18:36:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/2016/</loc>
+  <loc>https://allanderek.github.io/2016/</loc>
   <lastmod>2016-01-06T16:54:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/archive.html</loc>
-  <lastmod>2016-05-07T11:19:00Z</lastmod>
+  <loc>https://allanderek.github.io/archive.html</loc>
+  <lastmod>2016-05-08T18:44:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/</loc>
+  <loc>https://allanderek.github.io/categories/</loc>
   <lastmod>2016-05-07T11:21:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/casperjs/</loc>
+  <loc>https://allanderek.github.io/categories/casperjs/</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/coding-style/</loc>
+  <loc>https://allanderek.github.io/categories/coding-style/</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/coverage/</loc>
+  <loc>https://allanderek.github.io/categories/coverage/</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/dynamically-typed-languages/</loc>
+  <loc>https://allanderek.github.io/categories/dynamically-typed-languages/</loc>
   <lastmod>2016-05-07T11:21:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/mutation-testing/</loc>
+  <loc>https://allanderek.github.io/categories/mutation-testing/</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/python/</loc>
+  <loc>https://allanderek.github.io/categories/python/</loc>
   <lastmod>2016-03-17T11:20:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/scc/</loc>
+  <loc>https://allanderek.github.io/categories/scc/</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/selenium/</loc>
+  <loc>https://allanderek.github.io/categories/selenium/</loc>
   <lastmod>2016-03-17T11:20:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/statically-typed-languages/</loc>
+  <loc>https://allanderek.github.io/categories/statically-typed-languages/</loc>
   <lastmod>2016-05-07T11:21:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/testing/</loc>
+  <loc>https://allanderek.github.io/categories/testing/</loc>
   <lastmod>2016-03-17T11:25:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/categories/typing/</loc>
+  <loc>https://allanderek.github.io/categories/typing/</loc>
   <lastmod>2016-05-07T11:21:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/dynamically-typed-languages-why/</loc>
+  <loc>https://allanderek.github.io/posts/dynamically-typed-languages-why/</loc>
   <lastmod>2016-05-07T11:19:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/flask-%2B-coverage-analysis/</loc>
+  <loc>https://allanderek.github.io/posts/flask-%2B-coverage-analysis/</loc>
   <lastmod>2016-01-25T15:38:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/import-placement/</loc>
+  <loc>https://allanderek.github.io/posts/import-placement/</loc>
   <lastmod>2016-02-09T14:47:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/method-cascading/</loc>
+  <loc>https://allanderek.github.io/posts/method-cascading/</loc>
   <lastmod>2016-02-23T15:23:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/selenium-and-casper/</loc>
+  <loc>https://allanderek.github.io/posts/selenium-and-casper/</loc>
   <lastmod>2016-01-08T18:04:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/selenium-and-javascript-events/</loc>
+  <loc>https://allanderek.github.io/posts/selenium-and-javascript-events/</loc>
   <lastmod>2016-03-16T18:57:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/test-first-mutation-testing/</loc>
+  <loc>https://allanderek.github.io/posts/test-first-mutation-testing/</loc>
   <lastmod>2016-02-20T13:40:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/update-flask%2Bcoverage/</loc>
+  <loc>https://allanderek.github.io/posts/update-flask%2Bcoverage/</loc>
   <lastmod>2016-01-26T15:27:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/posts/welcome/</loc>
+  <loc>https://allanderek.github.io/posts/welcome/</loc>
   <lastmod>2016-01-06T16:54:00Z</lastmod>
  </url>
  <url>
-  <loc>http://allanderek.github.io/stories/curriculum-vitae/</loc>
+  <loc>https://allanderek.github.io/stories/curriculum-vitae/</loc>
   <lastmod>2016-01-06T18:36:00Z</lastmod>
  </url>
 </urlset>
