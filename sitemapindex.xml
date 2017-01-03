@@ -7,54 +7,62 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://allanderek.github.io/categories/casperjs.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/coding-style.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/coverage.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/dead-code.xml</loc>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/dynamically-typed-languages.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/maintenance.xml</loc>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/mutation-testing.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/python.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/scc.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/selenium.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/statically-typed-languages.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/testing.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/typing.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/rss.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2016-05-08T18:44:00Z</lastmod>
+  <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
 </sitemapindex>
