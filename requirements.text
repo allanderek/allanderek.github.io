@@ -2,6 +2,7 @@ blinker==1.4
 cloudpickle==0.2.2
 docutils==0.13.1
 doit==0.29.0
+ghp-import2==1.0.1
 husl==4.0.3
 Logbook==1.0.0
 lxml==3.7.1
