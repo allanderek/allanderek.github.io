@@ -1165,3 +1165,20 @@ GLOBAL_CONTEXT = {}
 # GLOBAL_CONTEXT as parameter when the template is about to be
 # rendered
 GLOBAL_CONTEXT_FILLER = []
+
+
+# While Nikola can select a sensible locale for each language,
+# sometimes explicit control can come handy.
+# In this file we express locales in the string form that
+# python's locales will accept in your OS, by example
+# "en_US.utf8" in Unix-like OS, "English_United States" in Windows.
+# LOCALES = dict mapping language --> explicit locale for the languages
+# in TRANSLATIONS. You can omit one or more keys.
+# LOCALE_FALLBACK = locale to use when an explicit locale is unavailable
+# LOCALE_DEFAULT = locale to use for languages not mentioned in LOCALES; if
+# not set the default Nikola mapping is used.
+
+# LOCALES = {'en': 'en_GB.UTF-8'} # does not work for some reason I don't understand
+LOCALES = {'en': 'C.UTF-8'}
+# LOCALE_FALLBACK = None
+# LOCALE_DEFAULT = None
