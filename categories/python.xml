@@ -1,5 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet (python)</title><link>https://allanderek.github.io/</link><description></description><atom:link type="application/rss+xml" rel="self" href="https://allanderek.github.io/categories/python.xml"></atom:link><language>en</language><lastBuildDate>Sat, 14 Jan 2017 15:12:50 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Lazy calculation</title><link>https://allanderek.github.io/posts/lazy-calculation/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;In many cases whilst programming there is a decision to be made as to whether
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet (python)</title><link>https://allanderek.github.io/</link><description></description><atom:link href="https://allanderek.github.io/categories/python.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Sat, 14 Jan 2017 15:47:50 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>if as syntax possibility</title><link>https://allanderek.github.io/posts/if-as-syntax-possibility/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;I have a small niggle that comes up in my Python programming. I'm going to describe it and propose a possible addition to the Python programming language that would mostly solve the problem. However, I have not thought through this language modification at all thoroughly so at the moment it's just a germ of an idea. It wouldn't be a major change or fix any important problem in any case, it would just solve my own personal peeve.&lt;/p&gt;
+&lt;h3&gt;Properties&lt;/h3&gt;
+&lt;p&gt;First of all, a brief reminder of the very useful 'property' decorator in Python.
+You may have an attribute on a class which is initially a simple value. However,
+at some point later you realise that you need to calculate that attribute everytime
+it is accessed. You may have something like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;age&lt;/span&gt; = &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;You then realise that this means you would have to continually update the person's
+age. So instead you implement &lt;code&gt;age&lt;/code&gt; as a "property":&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;dob&lt;/span&gt; = &lt;span class="n"&gt;datetime&lt;/span&gt;.&lt;span class="n"&gt;today&lt;/span&gt;()
+
+    &lt;span class="nv"&gt;@property&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;age&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="k"&gt;return&lt;/span&gt; (&lt;span class="n"&gt;datetime&lt;/span&gt;.&lt;span class="n"&gt;today&lt;/span&gt;() - &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;dob&lt;/span&gt;).&lt;span class="n"&gt;years&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;For the most part I like this ability and use it frequently. You may even have
+two distinct classes which both implement a particular protocol, part of which
+is that the object in question must have a particular attribute. It may be that
+for one kind of object the attribute is indeed a simple attribute, but that for
+another it must be calculated.&lt;/p&gt;
+&lt;p&gt;So properties are, I think, generally a good addition to the language. One
+downside is that sometimes a simple attribute access, &lt;code&gt;my_object.my_attribute&lt;/code&gt;
+can be a more expensive operation than it looks because it is actually
+implemented as a property.&lt;/p&gt;
+&lt;h3&gt;Peeve&lt;/h3&gt;
+&lt;p&gt;In Python I find myself doing something like the following quite often:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;if object.attribute:
+    do_something(object.attribute)
+else:
+    do_something_else(object)
+&lt;/pre&gt;
+
+
+&lt;p&gt;For example, I might be showing a user of a web application why they cannot
+perform some action they are attempting to:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;if post.unpublishable_reasons:
+    for reason in post.unpublishable_reasons:
+        flask.flash(reason)
+    return render_template('error.html', ...)
+else:
+    return render_template('published.html', ...)
+&lt;/pre&gt;
+
+
+&lt;p&gt;Where &lt;code&gt;post.unpublishable_reasons&lt;/code&gt; might be a property on a &lt;code&gt;class&lt;/code&gt; which may
+take some time to calculate:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Post&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
+    ....
+    &lt;span class="nv"&gt;@property&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;unpublishable_reasons&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        ... &lt;span class="n"&gt;something&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;takes&lt;/span&gt; &lt;span class="nb"&gt;time&lt;/span&gt; &lt;span class="o"&gt;and&lt;/span&gt; &lt;span class="n"&gt;ultimately&lt;/span&gt; &lt;span class="n"&gt;calculates&lt;/span&gt; &lt;span class="n"&gt;reasons&lt;/span&gt;...
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;reasons&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Which then leads me to have code like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;reasons = post.unpublishable_reasons
+if reasons:
+    for reason in reasons:
+        flask.flash(reason)
+    return render_template('error.html', ...)
+else:
+    return render_template('published.html', ...)
+&lt;/pre&gt;
+
+
+&lt;p&gt;This just irks me as a little inelegant. So I confess that I would quite like
+Python to allow something like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;if post.unpublishable_reasons as reasons:
+    for reason in reasons:
+        flask.flash(reason)
+    return render_template('error.html', ...)
+else:
+    return render_template('published.html', ...)
+&lt;/pre&gt;
+
+
+&lt;h3&gt;Comprehensions&lt;/h3&gt;
+&lt;p&gt;This might also partially solve a problem with comprehensions in that you can
+filter-then-map but not map-then-filter. A filter-then-map looks like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;positive_doubles = [i * 2 for i in my_numbers if i &amp;gt; 0]
+&lt;/pre&gt;
+
+
+&lt;p&gt;We first filter on each number (whether it is greater than zero) then each of
+those numbers which makes it through the filter is multiplied by two. It's a bit
+awkward to do the opposite, which is mapping the value first and then filtering
+on the result of the map. So if we wanted all the squares of a list of numbers
+that are less than 100 we require to do the operation twice:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;small_squares = [i * i for i in my_numbers if (i * i) &amp;lt; 100]
+&lt;/pre&gt;
+
+
+&lt;p&gt;Notice we had to have &lt;code&gt;i * i&lt;/code&gt; twice. It might be that the operation in question
+is quite expensive, so instead we can have two comprehensions:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;small_squares = [x for x in (i * i for i in my_numbers) if x &amp;lt; 100]
+&lt;/pre&gt;
+
+
+&lt;p&gt;Of course if the list is very long this might be a bit slow because we iterate
+through it twice.&lt;/p&gt;
+&lt;p&gt;Now if we allow some kind of if-as syntax we might be able to do something like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;new_list = [y for x in old_list if f(x) as y]
+&lt;/pre&gt;
+
+
+&lt;p&gt;This doesn't allow general filtering but would allow filtering out of falsey values.
+I'm much less keen on this as I feel if Python were to attack the map-then-filter
+problem for comprehensions then it should solve it completely.&lt;/p&gt;
+&lt;p&gt;In particular this would not work for the &lt;code&gt;small_squares&lt;/code&gt; example, for that we
+would need to allow something like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;small_squares = [x for i in my_numbers if (i * i as x) &amp;gt; 100]
+&lt;/pre&gt;
+
+
+&lt;p&gt;Note that this is even more of an extension than that proposed. That is assigning
+&lt;code&gt;x&lt;/code&gt; to a particular sub-expression of the condition.&lt;/p&gt;&lt;/div&gt;</description><category>python</category><category>syntax</category><guid>https://allanderek.github.io/posts/if-as-syntax-possibility/</guid><pubDate>Sat, 14 Jan 2017 15:18:08 GMT</pubDate></item><item><title>Lazy calculation</title><link>https://allanderek.github.io/posts/lazy-calculation/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;In many cases whilst programming there is a decision to be made as to whether
 to &lt;em&gt;store&lt;/em&gt; some state, or (re)&lt;em&gt;caluate&lt;/em&gt; it as and when needed. Obviously every
 situation is different and therefore there is no one answer which fits. In this
 post I'm going to attempt to explain the distinction and the benefits/drawbacks
@@ -923,24 +1050,4 @@ so doing does not allow coverage to complete.&lt;/p&gt;
 &lt;p&gt;A simpler method is to start the server process yourself under coverage. You
 then only need a means to shutdown the server programatically. I do this by
 adding a &lt;code&gt;shutdown&lt;/code&gt; route.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/flask-%2B-coverage-analysis/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/flask-%2B-coverage-analysis/</guid><pubDate>Mon, 25 Jan 2016 15:20:50 GMT</pubDate></item><item><title>Selenium vs CasperJS</title><link>https://allanderek.github.io/posts/selenium-and-casper/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Suppose you have a web service using a Python web framework such as Flask.
-So you wish to do a full user test by automating the browser. Should you use
-the Python bindings to Selenium or CasperJS? In this post I wish to detail some
-of the advantages and drawbacks of both.&lt;/p&gt;
-&lt;h3&gt;Python + Selenium Setup&lt;/h3&gt;
-&lt;p&gt;This is fairly straightforward. You are simply writing some Python code that
-happens to call a library which binds to Selenium. In order for this to work
-you will need to install phantomJS but using &lt;code&gt;npm&lt;/code&gt; this is pretty trivial.&lt;/p&gt;
-&lt;h3&gt;Javascript + CasperJS Setup&lt;/h3&gt;
-&lt;p&gt;I say Javascript, but at least when I'm using casperJS it tends to be from
-Coffeescript, but whichever is your fancy works well enough. Similarly to the
-above you will need to install casperJS through the &lt;code&gt;npm&lt;/code&gt; but again this is
-pretty trivial.&lt;/p&gt;
-&lt;h3&gt;Speed&lt;/h3&gt;
-&lt;p&gt;For my sample project the casperJS tests are faster, by quite a bit. This
-certainly warrants some more investigation as to exactly why this is the case,
-but for now my sample project runs the casperJS tests in around 3 seconds whilst
-the Selenium ones take around 12 seconds to do the same amount of work. I'm not
-sure whether this is a constant factor or whether it will get worse with more
-tests.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/selenium-and-casper/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>casperjs</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/selenium-and-casper/</guid><pubDate>Fri, 08 Jan 2016 11:11:40 GMT</pubDate></item></channel></rss>
+&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/flask-%2B-coverage-analysis/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>coverage</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/flask-%2B-coverage-analysis/</guid><pubDate>Mon, 25 Jan 2016 15:20:50 GMT</pubDate></item></channel></rss>

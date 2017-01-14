@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>if as syntax possibility | Coding Diet</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta content="#5670d4" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://allanderek.github.io/posts/if-as-syntax-possibility/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Allan Clark">
+<link rel="prev" href="../lazy-calculation/" title="Lazy calculation" type="text/html">
+<meta property="og:site_name" content="Coding Diet">
+<meta property="og:title" content="if as syntax possibility">
+<meta property="og:url" content="https://allanderek.github.io/posts/if-as-syntax-possibility/">
+<meta property="og:description" content="I have a small niggle that comes up in my Python programming. I'm going to describe it and propose a possible addition to the Python programming language that would mostly solve the problem. However, ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2017-01-14T15:18:08Z">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="syntax">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://allanderek.github.io/">
+
+                <span id="blog-title">Coding Diet</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+                </li>
+<li>
+<a href="../../stories/curriculum-vitae/">CV</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.md" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">if as syntax possibility</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                    Allan Clark
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2017-01-14T15:18:08Z" itemprop="datePublished" title="2017-01-14 15:18">2017-01-14 15:18</time></a></p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/if-as-syntax-possibility.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.md" id="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>I have a small niggle that comes up in my Python programming. I'm going to describe it and propose a possible addition to the Python programming language that would mostly solve the problem. However, I have not thought through this language modification at all thoroughly so at the moment it's just a germ of an idea. It wouldn't be a major change or fix any important problem in any case, it would just solve my own personal peeve.</p>
+<h3>Properties</h3>
+<p>First of all, a brief reminder of the very useful 'property' decorator in Python.
+You may have an attribute on a class which is initially a simple value. However,
+at some point later you realise that you need to calculate that attribute everytime
+it is accessed. You may have something like:</p>
+<pre class="code literal-block"><span></span><span class="k">class</span> <span class="n">Person</span>(<span class="n">object</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>, <span class="n">gender</span>):
+        <span class="k">self</span>.<span class="n">gender</span> = <span class="n">gender</span>
+        <span class="k">self</span>.<span class="n">age</span> = <span class="mi">0</span>
+</pre>
+
+
+<p>You then realise that this means you would have to continually update the person's
+age. So instead you implement <code>age</code> as a "property":</p>
+<pre class="code literal-block"><span></span><span class="k">class</span> <span class="n">Person</span>(<span class="n">object</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>, <span class="n">gender</span>):
+        <span class="k">self</span>.<span class="n">gender</span> = <span class="n">gender</span>
+        <span class="k">self</span>.<span class="n">dob</span> = <span class="n">datetime</span>.<span class="n">today</span>()
+
+    <span class="nv">@property</span>
+    <span class="n">def</span> <span class="n">age</span>(<span class="k">self</span>):
+        <span class="k">return</span> (<span class="n">datetime</span>.<span class="n">today</span>() - <span class="k">self</span>.<span class="n">dob</span>).<span class="n">years</span>
+</pre>
+
+
+<p>For the most part I like this ability and use it frequently. You may even have
+two distinct classes which both implement a particular protocol, part of which
+is that the object in question must have a particular attribute. It may be that
+for one kind of object the attribute is indeed a simple attribute, but that for
+another it must be calculated.</p>
+<p>So properties are, I think, generally a good addition to the language. One
+downside is that sometimes a simple attribute access, <code>my_object.my_attribute</code>
+can be a more expensive operation than it looks because it is actually
+implemented as a property.</p>
+<h3>Peeve</h3>
+<p>In Python I find myself doing something like the following quite often:</p>
+<pre class="code literal-block"><span></span>if object.attribute:
+    do_something(object.attribute)
+else:
+    do_something_else(object)
+</pre>
+
+
+<p>For example, I might be showing a user of a web application why they cannot
+perform some action they are attempting to:</p>
+<pre class="code literal-block"><span></span>if post.unpublishable_reasons:
+    for reason in post.unpublishable_reasons:
+        flask.flash(reason)
+    return render_template('error.html', ...)
+else:
+    return render_template('published.html', ...)
+</pre>
+
+
+<p>Where <code>post.unpublishable_reasons</code> might be a property on a <code>class</code> which may
+take some time to calculate:</p>
+<pre class="code literal-block"><span></span><span class="k">class</span> <span class="n">Post</span>(<span class="n">database</span>.<span class="n">Model</span>):
+    ....
+    <span class="nv">@property</span>
+    <span class="n">def</span> <span class="n">unpublishable_reasons</span>(<span class="k">self</span>):
+        ... <span class="n">something</span> <span class="n">that</span> <span class="n">takes</span> <span class="nb">time</span> <span class="o">and</span> <span class="n">ultimately</span> <span class="n">calculates</span> <span class="n">reasons</span>...
+        <span class="k">return</span> <span class="n">reasons</span>
+</pre>
+
+
+<p>Which then leads me to have code like:</p>
+<pre class="code literal-block"><span></span>reasons = post.unpublishable_reasons
+if reasons:
+    for reason in reasons:
+        flask.flash(reason)
+    return render_template('error.html', ...)
+else:
+    return render_template('published.html', ...)
+</pre>
+
+
+<p>This just irks me as a little inelegant. So I confess that I would quite like
+Python to allow something like:</p>
+<pre class="code literal-block"><span></span>if post.unpublishable_reasons as reasons:
+    for reason in reasons:
+        flask.flash(reason)
+    return render_template('error.html', ...)
+else:
+    return render_template('published.html', ...)
+</pre>
+
+
+<h3>Comprehensions</h3>
+<p>This might also partially solve a problem with comprehensions in that you can
+filter-then-map but not map-then-filter. A filter-then-map looks like:</p>
+<pre class="code literal-block"><span></span>positive_doubles = [i * 2 for i in my_numbers if i &gt; 0]
+</pre>
+
+
+<p>We first filter on each number (whether it is greater than zero) then each of
+those numbers which makes it through the filter is multiplied by two. It's a bit
+awkward to do the opposite, which is mapping the value first and then filtering
+on the result of the map. So if we wanted all the squares of a list of numbers
+that are less than 100 we require to do the operation twice:</p>
+<pre class="code literal-block"><span></span>small_squares = [i * i for i in my_numbers if (i * i) &lt; 100]
+</pre>
+
+
+<p>Notice we had to have <code>i * i</code> twice. It might be that the operation in question
+is quite expensive, so instead we can have two comprehensions:</p>
+<pre class="code literal-block"><span></span>small_squares = [x for x in (i * i for i in my_numbers) if x &lt; 100]
+</pre>
+
+
+<p>Of course if the list is very long this might be a bit slow because we iterate
+through it twice.</p>
+<p>Now if we allow some kind of if-as syntax we might be able to do something like:</p>
+<pre class="code literal-block"><span></span>new_list = [y for x in old_list if f(x) as y]
+</pre>
+
+
+<p>This doesn't allow general filtering but would allow filtering out of falsey values.
+I'm much less keen on this as I feel if Python were to attack the map-then-filter
+problem for comprehensions then it should solve it completely.</p>
+<p>In particular this would not work for the <code>small_squares</code> example, for that we
+would need to allow something like:</p>
+<pre class="code literal-block"><span></span>small_squares = [x for i in my_numbers if (i * i as x) &gt; 100]
+</pre>
+
+
+<p>Note that this is even more of an extension than that proposed. That is assigning
+<code>x</code> to a particular sub-expression of the condition.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+            <li><a class="tag p-category" href="../../categories/syntax/" rel="tag">syntax</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../lazy-calculation/" rel="prev" title="Lazy calculation">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="allanderek",
+            disqus_url="https://allanderek.github.io/posts/if-as-syntax-possibility/",
+        disqus_title="if as syntax possibility",
+        disqus_identifier="cache/posts/if-as-syntax-possibility.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="allanderek";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2017         <a href="mailto:allan.clark@gmail.com">Allan Clark</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

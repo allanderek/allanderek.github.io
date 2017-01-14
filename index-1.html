@@ -63,7 +63,45 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/welcome/" class="u-url">Welcome</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/selenium-and-casper/" class="u-url">Selenium vs CasperJS</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Allan Clark
+            </span></p>
+            <p class="dateline"><a href="posts/selenium-and-casper/" rel="bookmark"><time class="published dt-published" datetime="2016-01-08T11:11:40Z" title="2016-01-08 11:11">2016-01-08 11:11</time></a></p>
+                <p class="commentline">
+        
+    <a href="posts/selenium-and-casper/#disqus_thread" data-disqus-identifier="cache/posts/selenium-and-casper.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>Suppose you have a web service using a Python web framework such as Flask.
+So you wish to do a full user test by automating the browser. Should you use
+the Python bindings to Selenium or CasperJS? In this post I wish to detail some
+of the advantages and drawbacks of both.</p>
+<h3>Python + Selenium Setup</h3>
+<p>This is fairly straightforward. You are simply writing some Python code that
+happens to call a library which binds to Selenium. In order for this to work
+you will need to install phantomJS but using <code>npm</code> this is pretty trivial.</p>
+<h3>Javascript + CasperJS Setup</h3>
+<p>I say Javascript, but at least when I'm using casperJS it tends to be from
+Coffeescript, but whichever is your fancy works well enough. Similarly to the
+above you will need to install casperJS through the <code>npm</code> but again this is
+pretty trivial.</p>
+<h3>Speed</h3>
+<p>For my sample project the casperJS tests are faster, by quite a bit. This
+certainly warrants some more investigation as to exactly why this is the case,
+but for now my sample project runs the casperJS tests in around 3 seconds whilst
+the Selenium ones take around 12 seconds to do the same amount of work. I'm not
+sure whether this is a constant factor or whether it will get worse with more
+tests.</p>
+<p class="more"><a href="posts/selenium-and-casper/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/welcome/" class="u-url">Welcome</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn">
                 Allan Clark

@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/archive.html</loc>
-  <lastmod>2017-01-14T14:55:00Z</lastmod>
+  <lastmod>2017-01-14T15:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/</loc>
-  <lastmod>2017-01-03T16:39:00Z</lastmod>
+  <lastmod>2017-01-14T15:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/casperjs/</loc>
@@ -70,6 +70,10 @@
   <lastmod>2016-05-29T20:05:00Z</lastmod>
  </url>
  <url>
+  <loc>https://allanderek.github.io/categories/syntax/</loc>
+  <lastmod>2017-01-14T15:42:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://allanderek.github.io/categories/testing/</loc>
   <lastmod>2016-05-29T20:05:00Z</lastmod>
  </url>
@@ -79,7 +83,7 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/index-1.html</loc>
-  <lastmod>2017-01-14T14:55:00Z</lastmod>
+  <lastmod>2017-01-14T15:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/covering-dead-code/</loc>
@@ -92,6 +96,10 @@
  <url>
   <loc>https://allanderek.github.io/posts/flask-%2B-coverage-analysis/</loc>
   <lastmod>2016-05-29T20:05:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/posts/if-as-syntax-possibility/</loc>
+  <lastmod>2017-01-14T15:42:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/import-placement/</loc>
