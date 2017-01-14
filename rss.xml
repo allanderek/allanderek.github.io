@@ -1,5 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet</title><link>https://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link type="application/rss+xml" href="https://allanderek.github.io/rss.xml" rel="self"></atom:link><language>en</language><lastBuildDate>Tue, 03 Jan 2017 17:23:28 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Covering dead code</title><link>https://allanderek.github.io/posts/covering-dead-code/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Dougal Matthews has written a &lt;a href="http://www.dougalmatthews.com/2016/Dec/16/finding-dead-code-with-vulture/"&gt;blog post&lt;/a&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Coding Diet</title><link>https://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link type="application/rss+xml" rel="self" href="https://allanderek.github.io/rss.xml"></atom:link><language>en</language><lastBuildDate>Sat, 14 Jan 2017 15:12:50 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Lazy calculation</title><link>https://allanderek.github.io/posts/lazy-calculation/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;In many cases whilst programming there is a decision to be made as to whether
+to &lt;em&gt;store&lt;/em&gt; some state, or (re)&lt;em&gt;caluate&lt;/em&gt; it as and when needed. Obviously every
+situation is different and therefore there is no one answer which fits. In this
+post I'm going to attempt to explain the distinction and the benefits/drawbacks
+of either approach. I hope that just remembering that this choice exists will
+force me to make an explicit choice, such that I may think about it a bit more.&lt;/p&gt;
+&lt;h2&gt;Distinction&lt;/h2&gt;
+&lt;p&gt;The distinction is a little akin to that between eager evaluation and lazy
+evalution but it is not the same. The distinction here is about code-maintenance.
+I'll start with a very simple example, and then move to a more realistic example
+which involves access to a database, which makes the decision a bit more interesting.&lt;/p&gt;
+&lt;p&gt;Suppose you have a very simple &lt;code&gt;class&lt;/code&gt; representing a person and the children
+that they may have:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt; = []
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt; = []
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_girl&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;)
+        &lt;span class="n"&gt;girl&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'female'&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;girl&lt;/span&gt;)
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;girl&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_boy&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="n"&gt;boy&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'male'&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;boy&lt;/span&gt;)
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;boy&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now, suppose somewhere in your code you wish to return the number of children
+that a particular person has. You can either keep track of this, or calculate it
+on the fly, here is the keep-track-of-it version:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt; = []
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt; = []
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;number_of_children&lt;/span&gt; = &lt;span class="mi"&gt;0&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_girl&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;)
+        &lt;span class="n"&gt;girl&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'female'&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;girl&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;number_of_children&lt;/span&gt; += &lt;span class="mi"&gt;1&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;girl&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_boy&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="n"&gt;boy&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'boy'&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;boy&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;number_of_children&lt;/span&gt; += &lt;span class="mi"&gt;1&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;boy&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Here is a possible calculate-it-on-the-fly version:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt; = []
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt; = []
+
+    &lt;span class="nv"&gt;@property&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;number_of_children&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;) + &lt;span class="n"&gt;len&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;)
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_girl&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;)
+        &lt;span class="n"&gt;girl&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'female'&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;girl&lt;/span&gt;)
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;girl&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_boy&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="n"&gt;boy&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'boy'&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;boy&lt;/span&gt;)
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;boy&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;In this particular case I prefer the calculate-it-on-the-fly approach. I like
+that I did not have to modify any existing code, I only had to add some. If I
+add some other method (suppose an &lt;code&gt;adopt&lt;/code&gt; method) then in the keep-track-of-it
+version I have to make sure I update our state variable &lt;code&gt;number_of_children&lt;/code&gt;
+appropriately. Finally, if we change our definition of what a 'child' is,
+suppose they have to be under 18 years-of-age, then keeping track-of-it, might
+not work at all, or if it does I have to be very careful about updating parents
+whenever a child ages.&lt;/p&gt;
+&lt;p&gt;In terms of performance, this is often trickty to evaluate correctly. Essentially,
+you're asking whether the calculation of the state on the fly, is more expensive,
+than code to keep track of it. This of course depends hugely on often you inspect
+the state. You may do a lot of work to keep-track of a state variable that is
+never inspected, or inspected only very rarely. On the other hand, if it is
+inspected often, but not updated much, the calculate-it-on-the-fly approach,
+may be needlessly re-doing the exact same computation many times.&lt;/p&gt;
+&lt;p&gt;As a side-note there is a &lt;a href="https://pypi.python.org/pypi/lazy/1.2"&gt;lazy&lt;/a&gt; package
+for Python that lets you calculate attributes once when needed, and then stores
+the result for later retrieval. Of course if you update anything the calculation
+depends upon you have to make sure an invalidate the stored result. I've found
+it is useful in the case that an attribute won't ever need to be re-calculated,
+but might never need to be calculated at all (and is expensive to do so).&lt;/p&gt;
+&lt;h2&gt;More interesting example&lt;/h2&gt;
+&lt;p&gt;For in-memory occurrences such as the simple example above, often the choice is
+pretty clear. Code is often clearer if you calculate-it-on-the-fly, and only
+resort to keep-track-of-it whenever the value is somewhat expensive to calculate,
+used very often, or particularly simple to keep track of.&lt;/p&gt;
+&lt;p&gt;However, the choice becomes more interesting when the calculation of the value
+involves some external state, even if keeping-track-of-it is done on the
+external state. A common case is when the state is kept in a database. In Python,
+you may well be using an ORM to access the external state. &lt;/p&gt;
+&lt;p&gt;Consider an online game website, for some game that has four players. Let's
+suppose the game is turn-based and players are not expected to be logged in for
+the entire duration, but just take their turn whenever they are online. The game
+then can be in multiple states: waiting for players, running, finished. So in
+some ORM you might describe a game like:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Game&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
+    &lt;span class="n"&gt;player_one_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
+    &lt;span class="n"&gt;player_two_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
+    &lt;span class="n"&gt;player_three_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
+    &lt;span class="n"&gt;player_four_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
+
+    &lt;span class="n"&gt;winner_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
+
+    .... &lt;span class="n"&gt;bunch&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt; &lt;span class="n"&gt;columns&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;actually&lt;/span&gt; &lt;span class="n"&gt;describe&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;game&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; ....
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now, suppose you wish to display a list of running games for a user, you could
+do it something like this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Game&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
+    ... &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="o"&gt;before&lt;/span&gt; ...
+    &lt;span class="n"&gt;state_names&lt;/span&gt; = [&lt;span class="s"&gt;'waiting'&lt;/span&gt;, &lt;span class="s"&gt;'running'&lt;/span&gt;, &lt;span class="s"&gt;'finished'&lt;/span&gt;]
+    &lt;span class="k"&gt;state&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Enum&lt;/span&gt;(*&lt;span class="n"&gt;state_names&lt;/span&gt;), &lt;span class="n"&gt;nullable&lt;/span&gt;=&lt;span class="nb"&gt;False&lt;/span&gt;, &lt;span class="k"&gt;default&lt;/span&gt;=&lt;span class="s"&gt;'waiting'&lt;/span&gt;)
+
+    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;running_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
+        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="k"&gt;state&lt;/span&gt; == &lt;span class="s"&gt;'running'&lt;/span&gt;,
+            &lt;span class="n"&gt;or_&lt;/span&gt;(
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+            )
+        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
+
+    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;open_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
+        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="k"&gt;state&lt;/span&gt; == &lt;span class="s"&gt;'waiting'&lt;/span&gt;,
+            &lt;span class="n"&gt;and_&lt;/span&gt;(
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+            )
+        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Using this way you would have to make sure that when the fourth player joins a
+game the state is set to 'running', and when the game finishes the state is set
+to 'finished', along with the 'winner' being set.&lt;/p&gt;
+&lt;p&gt;Instead one could use calculate-it-on-the-fly as in:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Game&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
+    ... &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="o"&gt;before&lt;/span&gt; ...
+    &lt;span class="c c-Singleline"&gt;# No state column&lt;/span&gt;
+
+    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;running_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
+        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
+            &lt;span class="n"&gt;or_&lt;/span&gt;(
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+            ),
+            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;winner_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;
+        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
+
+    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;open_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
+        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
+            &lt;span class="n"&gt;or_&lt;/span&gt;(
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
+            )
+            &lt;span class="n"&gt;and_&lt;/span&gt;(
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
+            )
+        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;This could be simplified a bit if we assume that players fill slots in order
+such that it is never the case that &lt;code&gt;Game.player_four_id&lt;/code&gt; is not &lt;code&gt;None&lt;/code&gt; whilst
+one of the others is. &lt;/p&gt;
+&lt;p&gt;In this particular case then I think the keep-track-of-it is a little simpler.
+But this hugely depends on the logic for joining a game, taking ones turn, and
+finishing the game. In particular when a game is finished you have to set the
+&lt;code&gt;winner_id&lt;/code&gt; column anyway, so it seems like not too much of a burden to
+additionally set the &lt;code&gt;state&lt;/code&gt; column.&lt;/p&gt;
+&lt;p&gt;However, there are many situations in which, calculate-it-on-the-fly is more
+appropriate. A common case, occurs when the rules for state changes may change.
+For example, in the game case, we may decide that as long as there are two
+players, people can play the game, which is therefore &lt;code&gt;running&lt;/code&gt;. People may
+join a &lt;code&gt;running&lt;/code&gt; game, provided it is not full, and may leave a &lt;code&gt;running&lt;/code&gt; game.
+In this case, calculate-it-on-the-fly simply updates the rules for when a game
+is &lt;code&gt;running&lt;/code&gt;. However, keep-track-of-it, not only has to update its rules for
+when to modify a state (including now reverting a game from &lt;code&gt;running&lt;/code&gt; to
+&lt;code&gt;waiting&lt;/code&gt; when someone leaves a two player game), but must also go through the
+database and modify the &lt;code&gt;state&lt;/code&gt; column of any existing games. To do this, the
+database update code will essentially have to mimic the &lt;code&gt;calculate-it-on-the-fly&lt;/code&gt;
+code anyway.&lt;/p&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;There is often a choice to be made between maintaining some kind of state up-front,
+and calculating it whenever it is required. Both are useful and should be used
+depending on the situation. Recalling that there is such a choice may help a
+programmer to explicitly make that choice, and perhaps even record the reasons
+for it.&lt;/p&gt;&lt;/div&gt;</description><category>maintenance</category><category>python</category><guid>https://allanderek.github.io/posts/lazy-calculation/</guid><pubDate>Wed, 11 Jan 2017 17:47:02 GMT</pubDate></item><item><title>Covering dead code</title><link>https://allanderek.github.io/posts/covering-dead-code/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Dougal Matthews has written a &lt;a href="http://www.dougalmatthews.com/2016/Dec/16/finding-dead-code-with-vulture/"&gt;blog post&lt;/a&gt;
 detailing how &lt;a href="https://pypi.python.org/pypi/vulture"&gt;Vulture&lt;/a&gt; can be used to find some dead code.
 For me this was an important reminder not to rely on &lt;a href="https://pypi.python.org/pypi/coverage/"&gt;coverage analysis&lt;/a&gt;
 to detect dead code and remove it from the your maintenance burden. More generally, whilst I adore
@@ -713,10 +943,4 @@ but for now my sample project runs the casperJS tests in around 3 seconds whilst
 the Selenium ones take around 12 seconds to do the same amount of work. I'm not
 sure whether this is a constant factor or whether it will get worse with more
 tests.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/selenium-and-casper/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>casperjs</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/selenium-and-casper/</guid><pubDate>Fri, 08 Jan 2016 11:11:40 GMT</pubDate></item><item><title>Welcome</title><link>https://allanderek.github.io/posts/welcome/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Welcome to Coding Diet&lt;/h2&gt;
-&lt;p&gt;This is a simple blog intended to be related to good software development
-practices, but will probably contain more practical examples that I come across
-as I code. I use mainly Python for programming but, since a proportion of the
-coding I do is for web development I end up writing CoffeeScript or vanilla
-Javascript as well. I'm not averse to other languages as well and have a fairly
-strong background in Haskell which I may occasionally refer to as an example.&lt;/p&gt;&lt;/div&gt;</description><guid>https://allanderek.github.io/posts/welcome/</guid><pubDate>Wed, 06 Jan 2016 16:48:42 GMT</pubDate></item></channel></rss>
+&lt;p&gt;&lt;a href="https://allanderek.github.io/posts/selenium-and-casper/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>casperjs</category><category>python</category><category>selenium</category><category>testing</category><guid>https://allanderek.github.io/posts/selenium-and-casper/</guid><pubDate>Fri, 08 Jan 2016 11:11:40 GMT</pubDate></item></channel></rss>
