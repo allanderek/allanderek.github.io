@@ -204,8 +204,9 @@ is quite expensive, so instead we can have two comprehensions:</p>
 </pre>
 
 
-<p>Of course if the list is very long this might be a bit slow because we iterate
-through it twice.</p>
+<p><del>Of course if the list is very long this might be a bit slow because we iterate
+through it twice.</del> Edit. Not true as we use a generator on the inner loop as
+pointed out in the comments below.</p>
 <p>Now if we allow some kind of if-as syntax we might be able to do something like:</p>
 <pre class="code literal-block"><span></span>new_list = [y for x in old_list if f(x) as y]
 </pre>
