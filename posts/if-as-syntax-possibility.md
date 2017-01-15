@@ -115,8 +115,9 @@ is quite expensive, so instead we can have two comprehensions:
 
     small_squares = [x for x in (i * i for i in my_numbers) if x < 100]
     
-Of course if the list is very long this might be a bit slow because we iterate
-through it twice.
+~~Of course if the list is very long this might be a bit slow because we iterate
+through it twice.~~ Edit. Not true as we use a generator on the inner loop as
+pointed out in the comments below.
 
 Now if we allow some kind of if-as syntax we might be able to do something like:
 
