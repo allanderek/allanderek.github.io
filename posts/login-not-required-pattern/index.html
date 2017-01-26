@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login not required pattern | Coding Diet</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta content="#5670d4" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://allanderek.github.io/posts/login-not-required-pattern/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Allan Clark">
+<link rel="prev" href="../if-as-syntax-possibility/" title="if as syntax possibility" type="text/html">
+<meta property="og:site_name" content="Coding Diet">
+<meta property="og:title" content="Login not required pattern">
+<meta property="og:url" content="https://allanderek.github.io/posts/login-not-required-pattern/">
+<meta property="og:description" content="Introduction
+Typically routes in a web application that require login are explicitly marked as such. Whilst routes that are open to general (anonymous) users, are left unmarked and hence implicitly do">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2017-01-26T00:05:26Z">
+<meta property="article:tag" content="code maintenance">
+<meta property="article:tag" content="flask">
+<meta property="article:tag" content="python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://allanderek.github.io/">
+
+                <span id="blog-title">Coding Diet</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+                </li>
+<li>
+<a href="../../stories/curriculum-vitae/">CV</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.md" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Login not required pattern</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                    Allan Clark
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2017-01-26T00:05:26Z" itemprop="datePublished" title="2017-01-26 00:05">2017-01-26 00:05</time></a></p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/login-not-required-pattern.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.md" id="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<h2>Introduction</h2>
+<p>Typically routes in a web application that require login are explicitly marked as such. Whilst routes that are open to general (anonymous) users, are left unmarked and hence implicitly do not require login. Because the default is to allow all users to visit a particular route, it is easy to forget to mark a route as requiring a login.</p>
+<p>I'm going to show a small pattern for making sure that all routes in a web application are explicitly marked as either requiring login or not-requiring login. As an example this will be done in a Python, Flask-based web application using <a href="https://flask-login.readthedocs.io/en/latest/">Flask-Login</a> but the general idea probably works in at least some other Python web application frameworks. </p>
+<h2>The Basics</h2>
+<p>Let's start with a very simple Flask web application that just has two routes:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">static_folder</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/unprotected'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unprotected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello everyone, anonymous users included!'</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/protected'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">protected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello users, only those of you logged-in!'</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+
+
+<p>Now, obviously we want the <code>protected</code> route to only be available to those users who have logged in, whilst the <code>unprotected</code> route is available to all. We'll leave the details of how users actually sign-up, log-in and log-out, see the <a href="https://flask-login.readthedocs.io/en/latest/">Flask-Login documentation for examples</a>.</p>
+<p>To mark our <code>protected</code> route we can use the decorator provided by Flask-Login:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">flask_login</span>
+<span class="o">...</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/protected'</span><span class="p">)</span>
+<span class="nd">@flask_login.login_required</span>
+<span class="k">def</span> <span class="nf">protected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello users, only those of you logged-in!'</span>
+<span class="o">...</span>
+</pre>
+
+
+<p>I only added two lines, the import of <code>flask_login</code> and a second decorator to the <code>protected</code> method. This is how Flask-Login works. You decorate those routes that you wish to be protected. As I said, this scheme is fine, but it is easy enough to forget to mark a route that should be protected.</p>
+<h2>Explicitly mark all routes</h2>
+<p>The scheme I used, was to make a decorator that accepted a parameter. If the parameter is <code>True</code> then all routes associated with the decorated view function are marked as requiring login. In addition, this decorator sets an attribute on the view function itself indicating whether or not login is required. We can then check <em>all</em> view functions and assert that they have the chosen attribute. So first the new view functions, with a decorator we'll add.</p>
+<pre class="code literal-block"><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/unprotected'</span><span class="p">)</span>
+<span class="nd">@login_required</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unprotected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello everyone, anonymous users included!'</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/protected'</span><span class="p">)</span>
+<span class="nd">@login_required</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">protected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello users, only those of you logged-in!'</span>
+</pre>
+
+
+<p>So fairly simple stuff. Now to create the decorator:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">login_required</span><span class="p">(</span><span class="n">required</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">flask_login</span><span class="o">.</span><span class="n">login_required</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">login_required</span> <span class="o">=</span> <span class="n">required</span>
+        <span class="k">return</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+</pre>
+
+
+<p>This just calls the original <code>@flask_login.login_required</code> decorator in the case that the argument is <code>True</code>, but in addition adds an attribute to the view function that we can check later.</p>
+<h3>Ensure all are marked</h3>
+<p>So to ensure that all routes have been marked in some way you just need to check all view functions have the <code>login_required</code> attribute set:</p>
+<pre class="code literal-block"><span></span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_f</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">"{} needs to set whether login is required or not"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">view_f</span><span class="p">,</span> <span class="s1">'login_required'</span><span class="p">),</span> <span class="n">message</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+
+
+<p>Now if you run this you will get such an error. That is because you don't set up all of your own routes, in particular Flask provides a <code>static</code> route. That's easy enough to ignore though:</p>
+<pre class="code literal-block"><span></span><span class="n">ignored_views</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'static'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_f</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">"{} needs to set whether login is required or not"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ignored_views</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">view_f</span><span class="p">,</span> <span class="s1">'login_required'</span><span class="p">),</span> <span class="n">message</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+
+
+<h3>Tidy up</h3>
+<p>There are just a couple of small caveats. Firstly, Flask-Login, provides a decorator to indicate that not only is login required, but it must be a <em>fresh</em> login. We can just allow passing <code>"fresh"</code> as an argument to our <code>login_required</code> decorator:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">login_required</span><span class="p">(</span><span class="n">required</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">required</span> <span class="o">==</span> <span class="s1">'fresh'</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">flask_login</span><span class="o">.</span><span class="n">fresh_login_required</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">required</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">flask_login</span><span class="o">.</span><span class="n">login_required</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">login_required</span> <span class="o">=</span> <span class="n">required</span>
+        <span class="k">return</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+</pre>
+
+
+<p>To avoid polluting the namespace with our <code>ignored_views</code> name and to indicate what the code is doing without needing a comment we can wrap our check in a function:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">check_all_views_declare_login_required</span><span class="p">():</span>
+    <span class="n">ignored_views</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'static'</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_f</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">"{} needs to set whether login is required or not"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ignored_views</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">view_f</span><span class="p">,</span> <span class="s1">'login_required'</span><span class="p">),</span> <span class="n">message</span>
+<span class="n">check_all_views_declare_login_required</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+
+
+<h3>Flask extensions</h3>
+<p>Many Flask extensions provide their own routes which are mapped to view functions that they have defined. You <em>could</em> add those to the <code>ignored_views</code> list, but this seems like additional maintenance. Worse, something like <a href="https://flask-admin.readthedocs.io/en/latest/">Flask-Admin</a> adds a large number of view functions. In addition, if you setup Flask-Admin to automatically generate model views for each of the models in your database, then if you add to your database model it will generate <em>more</em> view functions and you will have to update your <code>ignored_views</code> list again. The alternative is to perform your <code>check_all_views_declare_login_required</code> before you call <code>init_app</code> on your <code>admin</code> instance. Suppose you have:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">flask</span>
+<span class="kn">import</span> <span class="nn">flask_login</span>
+
+<span class="kn">import</span> <span class="nn">flask_debugtoolbar</span>
+<span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
+
+<span class="n">database</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">()</span>
+<span class="n">admin</span> <span class="o">=</span> <span class="n">flask_admin</span><span class="o">.</span><span class="n">Admin</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'My app'</span><span class="p">,</span> <span class="n">template_mode</span><span class="o">=</span><span class="s1">'bootstrap3'</span><span class="p">)</span>
+
+<span class="o">....</span> <span class="n">Code</span> <span class="n">to</span> <span class="n">setup</span> <span class="n">the</span> <span class="n">database</span> <span class="ow">and</span> <span class="n">add</span> <span class="n">flask</span><span class="o">-</span><span class="n">admin</span> <span class="n">model</span> <span class="n">views</span> <span class="o">...</span>
+
+<span class="o">....</span> <span class="n">Actual</span> <span class="n">web</span> <span class="n">application</span> <span class="n">code</span> <span class="o">...</span>
+
+<span class="n">check_all_views_declare_login_required</span><span class="p">()</span>
+<span class="c1"># Initialise the Flask-Admin and Flask-DebugToolbar extensions after we have</span>
+<span class="c1"># checked our own views for declaring login required.</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">flask_debugtoolbar</span><span class="o">.</span><span class="n">DebugToolbarExtension</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+
+
+<h3>Final code</h3>
+<p>Just to provide the code in a simplest-as-possible form:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">flask</span>
+<span class="kn">import</span> <span class="nn">flask_login</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">static_folder</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">login_required</span><span class="p">(</span><span class="n">required</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">required</span> <span class="o">==</span> <span class="s1">'fresh'</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">flask_login</span><span class="o">.</span><span class="n">fresh_login_required</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">required</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">flask_login</span><span class="o">.</span><span class="n">login_required</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">login_required</span> <span class="o">=</span> <span class="n">required</span>
+        <span class="k">return</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/unprotected'</span><span class="p">)</span>
+<span class="nd">@login_required</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unprotected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello everyone, anonymous users included!'</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">'/protected'</span><span class="p">)</span>
+<span class="nd">@login_required</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">protected</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">'Hello users, only those of you logged-in!'</span>
+
+<span class="k">def</span> <span class="nf">check_all_views_declare_login_required</span><span class="p">():</span>
+    <span class="n">ignored_views</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'static'</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_f</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">"{} needs to set whether login is required or not"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ignored_views</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">view_f</span><span class="p">,</span> <span class="s1">'login_required'</span><span class="p">),</span> <span class="n">message</span>
+<span class="n">check_all_views_declare_login_required</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+
+
+<h2>Conclusion</h2>
+<p>I quite like that I now explicitly state for each route whether I require login or not, rather than relying on a default. You could of course extend this to your particular privileges scheme, for example you may have levels of authentication, such as, administrator, super-user, paid-user, normal-user, anonymous, or whatever.</p>
+<p>Because the check is done whenever the module is imported, this check will also be performed when running your test-suite.</p>
+<p>This won't work if your view functions are actually view methods because you won't be able to set the attribute on the view <em>method</em>. It is for exactly this reason that we had to use a list of <code>ignored_views</code> and could not just do:</p>
+<pre class="code literal-block"><span></span>    <span class="n">static_view_function</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="p">[</span><span class="s1">'static'</span><span class="p">]</span>
+    <span class="n">static_view_function</span><span class="o">.</span><span class="n">login_required</span> <span class="o">=</span> <span class="bp">False</span>
+</pre>
+
+
+<p>An alternative to this scheme would be to create your own <code>route</code> decorator that takes as parameter whether login is required as well as the normal route information. Essentially combine route and login decorators.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/code-maintenance/" rel="tag">code maintenance</a></li>
+            <li><a class="tag p-category" href="../../categories/flask/" rel="tag">flask</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../if-as-syntax-possibility/" rel="prev" title="if as syntax possibility">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="allanderek",
+            disqus_url="https://allanderek.github.io/posts/login-not-required-pattern/",
+        disqus_title="Login not required pattern",
+        disqus_identifier="cache/posts/login-not-required-pattern.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="allanderek";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2017         <a href="mailto:allan.clark@gmail.com">Allan Clark</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

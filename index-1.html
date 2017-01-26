@@ -63,7 +63,56 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/selenium-and-casper/" class="u-url">Selenium vs CasperJS</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/flask-%2B-coverage-analysis/" class="u-url">Flask + Coverage Analysis</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Allan Clark
+            </span></p>
+            <p class="dateline"><a href="posts/flask-%2B-coverage-analysis/" rel="bookmark"><time class="published dt-published" datetime="2016-01-25T15:20:50Z" title="2016-01-25 15:20">2016-01-25 15:20</time></a></p>
+                <p class="commentline">
+        
+    <a href="posts/flask-%2B-coverage-analysis/#disqus_thread" data-disqus-identifier="cache/posts/flask-+-coverage-analysis.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<h2>Flask + Coverage Analysis</h2>
+<p>This post demonstrates a simple web application written in Flask with coverage
+analysis for the tests. The main idea should be pretty translatable into most
+Python web application frameworks.</p>
+<h4>Update</h4>
+<p>I've updated this scheme and described the update <a href="posts/update-flask%2Bcoverage">here</a>.</p>
+<h3>tl;dr</h3>
+<p>If you're having difficulty getting coverage analysis to work with Flask then
+have a look at my <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>.
+The main take away is that you simply start the server in a process of its own
+using <code>coverage</code> to start it. However, in order for this to work you have to
+make sure you can shut the server process down from the test process. To do this
+we simply add a new "shutdown" route which is only available under testing. Your
+test code, whether written in Python or, say Javascript, can then make a request
+to this "shutdown" route once it completes its tests. This allows the server
+process to shutdown naturally and therefore allow 'coverage' to complete.</p>
+<h3>Introduction</h3>
+<p>It's a good idea to test the web applications you author. Most web application
+frameworks provide relatively solid means to do this. However, if you're doing
+browser automated functional tests against a live server I've found that getting
+<a href="https://pypi.python.org/pypi/coverage">coverage</a> to work to be non-trivial. A quick search will reveal similar
+difficulties such as <a href="http://stackoverflow.com/questions/23745370/setting-up-coverage-py-with-flask">this</a>
+stack overflow question, which ultimately points to the <a href="http://coverage.readthedocs.org/en/latest/subprocess.html">coverage documentation
+on sub-processes</a>.</p>
+<p>Part of the reason for this might be that the Flask-Testing extension provides
+live server testing class that starts your server in testing mode as part of
+the start-up of the test. It then also shuts the server process down, but in
+so doing does not allow coverage to complete.</p>
+<p>A simpler method is to start the server process yourself under coverage. You
+then only need a means to shutdown the server programatically. I do this by
+adding a <code>shutdown</code> route.</p>
+<p class="more"><a href="posts/flask-%2B-coverage-analysis/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/selenium-and-casper/" class="u-url">Selenium vs CasperJS</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn">
                 Allan Clark
