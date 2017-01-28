@@ -63,7 +63,66 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/flask-%2B-coverage-analysis/" class="u-url">Flask + Coverage Analysis</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/update-flask%2Bcoverage/" class="u-url">Update: Flask+Coverage</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Allan Clark
+            </span></p>
+            <p class="dateline"><a href="posts/update-flask%2Bcoverage/" rel="bookmark"><time class="published dt-published" datetime="2016-01-26T14:59:44Z" title="2016-01-26 14:59">2016-01-26 14:59</time></a></p>
+                <p class="commentline">
+        
+    <a href="posts/update-flask%2Bcoverage/#disqus_thread" data-disqus-identifier="cache/posts/update-flask+coverage.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<h2>Update: Flask+Coverage Analysis</h2>
+<p>In a <a href="posts/flask-%2B-coverage-analysis">previous post</a>
+I demonstrated how to get <code>coverage</code> analysis working for a Flask web application
+in a relatively simple manner. In the section <em>"At then end of your tests"</em> I
+stated that you needed your tests to clean-up by telling the server to shutdown.
+The end of your test code would look something like this:</p>
+<pre class="code literal-block"><span></span><span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_url</span><span class="p">(</span><span class="s1">'shutdown'</span><span class="p">))</span>
+    <span class="o">...</span>
+</pre>
+
+
+<p>This could have made things a little fiddly since your test code would have to
+make sure to access the <code>shutdown</code> route exactly once, regardless of how many
+tests were run.</p>
+<p>However, I realised that we could remove the burden from the test code by
+simply doing this in <code>manage.py</code> file.</p>
+<h3>Updated <code>manage.py</code>
+</h3>
+<p>Previously, we had the following code within our <code>manage.py</code> script within the
+<code>run_with_test_server</code> method:</p>
+<pre class="code literal-block"><span></span><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+<span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</pre>
+
+
+<p>We now update this to be:</p>
+<pre class="code literal-block"><span></span><span class="n">test_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">test_command</span><span class="p">)</span>
+<span class="n">test_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+<span class="n">shutdown_url</span> <span class="o">=</span> <span class="s1">'http://localhost:{}/shutdown'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">shutdown_url</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+<span class="n">server_return_code</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</pre>
+
+
+<p>Doing so means you can just write your tests without any need to worry about
+shutting down the server.
+The <a href="https://github.com/allanderek/flask-coverage-example">example repository</a>
+has been appropriately updated.</p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/flask-%2B-coverage-analysis/" class="u-url">Flask + Coverage Analysis</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn">
                 Allan Clark

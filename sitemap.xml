@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/archive.html</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/casperjs/</loc>
@@ -36,6 +36,10 @@
  <url>
   <loc>https://allanderek.github.io/categories/coding-style/</loc>
   <lastmod>2016-05-29T20:05:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/categories/containers/</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/coverage/</loc>
@@ -52,6 +56,14 @@
  <url>
   <loc>https://allanderek.github.io/categories/flask/</loc>
   <lastmod>2017-01-26T00:05:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/categories/isinstance/</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/categories/lists/</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/maintenance/</loc>
@@ -91,7 +103,7 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/index-1.html</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/covering-dead-code/</loc>
@@ -116,6 +128,10 @@
  <url>
   <loc>https://allanderek.github.io/posts/lazy-calculation/</loc>
   <lastmod>2017-01-14T14:55:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/posts/list-arguments-and-isinstance/</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/login-not-required-pattern/</loc>

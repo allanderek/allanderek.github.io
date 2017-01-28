@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List arguments and isinstance | Coding Diet</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta content="#5670d4" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://allanderek.github.io/posts/list-arguments-and-isinstance/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Allan Clark">
+<link rel="prev" href="../login-not-required-pattern/" title="Login not required pattern" type="text/html">
+<meta property="og:site_name" content="Coding Diet">
+<meta property="og:title" content="List arguments and isinstance">
+<meta property="og:url" content="https://allanderek.github.io/posts/list-arguments-and-isinstance/">
+<meta property="og:description" content="More than a decade and a half ago, Kragen Javier Sitaker wrote a blog post isinstance() considered harmful, a lot of which I believe holds up pretty well today. It's well worth reading it in its entir">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2017-01-28T11:36:23Z">
+<meta property="article:tag" content="containers">
+<meta property="article:tag" content="isinstance">
+<meta property="article:tag" content="lists">
+<meta property="article:tag" content="python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://allanderek.github.io/">
+
+                <span id="blog-title">Coding Diet</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+                </li>
+<li>
+<a href="../../stories/curriculum-vitae/">CV</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.md" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">List arguments and isinstance</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                    Allan Clark
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2017-01-28T11:36:23Z" itemprop="datePublished" title="2017-01-28 11:36">2017-01-28 11:36</time></a></p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/list-arguments-and-isinstance.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.md" id="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>More than a decade and a half ago, <a href="http://canonical.org/~kragen/">Kragen Javier Sitaker</a> wrote a blog post <a href="http://canonical.org/~kragen/isinstance/">isinstance() considered harmful</a>, a lot of which I believe holds up pretty well today. It's well worth reading it in its entirety but the gist is that rather than testing a value against a specific type, you generally wish to check that a value confirms to a particular interface. Or if you prefer, using <code>isinstance</code> is imparting <a href="http://wiki.c2.com/?NominativeAndStructuralTyping">nominative typing</a> in a language where duck typing is the convention.</p>
+<p>I came across what I initially thought was a reasonable use of <code>isintance</code> and this post is about my attempts to remove the reliance on <code>isinstance</code>.</p>
+<h3>The case</h3>
+<p>Writing a web application often involves checking the contents of the current page for specific content. Usually in the form of CSS selectors, or simply text. I had written a simple method to check whether specific texts were contained in any elements matching a given CSS selector. For example, you may have some way of flashing messages and you want to check that after a given request the resulting web page contains the list of messages that you expect.</p>
+<p>However, the general idea can be condensed to the more simple task of checking whether a list of texts are present with a main text. So the general idea is something like the following:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">contains_texts</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="n">test_content</span> <span class="o">=</span> <span class="s2">"abcdefg qwerty"</span>
+<span class="k">assert</span> <span class="n">contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="p">[</span><span class="s1">'abcdefg'</span><span class="p">,</span> <span class="s1">'qwerty'</span><span class="p">])</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>This works fine, but this is in testing code, so we want to make sure that tests do not inadvertently pass. The problem here is that the <code>texts</code> argument is intended to be  a list, or more generally, a container of some strings. The potential problem is that it is easy enough to make the mistake of calling this method with a single string. Strings are iterable, so unfortunately the following assertion passes:</p>
+<pre class="code literal-block"><span></span><span class="n">test_content</span> <span class="o">=</span> <span class="s2">"abcdefg qwerty"</span>
+<span class="k">assert</span> <span class="n">contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'gfedcba'</span><span class="p">)</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>This is because each of the characters in the single string argument are themselves in the main content, although the string itself is not.</p>
+<p>A potential fix for this is to use <code>isinstance</code> on the argument:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">isinstance_contains_texts</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">texts</span> <span class="ow">in</span> <span class="n">content</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="n">test_content</span> <span class="o">=</span> <span class="s2">"abcdefg qwerty"</span>
+<span class="k">assert</span> <span class="n">isinstance_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'abcdefg'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">isinstance_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'gfedcba'</span><span class="p">)</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>In this case we do the right thing if the method is called with a single string as the argument, but you could of course instead raise an error. So this basically solves our problem, but at the cost of using <code>isinstance</code>.</p>
+<p>What happens if the content becomes a bytestring, and the input strings themselves are bytestrings:</p>
+<pre class="code literal-block"><span></span><span class="k">assert</span> <span class="n">isinstance_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="s1">'hello'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'world'</span><span class="p">])</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">isinstance_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'olleh'</span><span class="p">)</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>We have the same problem as before. We could of course solve this by using <code>if isintance(texts, str) or isinstance(texts, bytes)</code>, but that feels like we're not really solving the essence of the problem.</p>
+<h3>Without isinstance</h3>
+<p>So instead of using <code>isinstance</code> we could check for what interface is supported by the argument. If we want to check that it is a singleton argument then we would be looking for something supported by strings and bytestrings, but not by, lists, sets, or other general containers:</p>
+<pre class="code literal-block"><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">str_and_bytestring</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">b</span><span class="s1">''</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">stringy_but_not_listy</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">str_and_bytestring</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">([])]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">stringy_but_not_listy</span>
+<span class="p">[</span><span class="s1">'__getnewargs__'</span><span class="p">,</span> <span class="s1">'capitalize'</span><span class="p">,</span> <span class="s1">'center'</span><span class="p">,</span> <span class="s1">'endswith'</span><span class="p">,</span> <span class="s1">'expandtabs'</span><span class="p">,</span> <span class="s1">'find'</span><span class="p">,</span> <span class="s1">'isalnum'</span><span class="p">,</span> <span class="s1">'isalpha'</span><span class="p">,</span> <span class="s1">'isdigit'</span><span class="p">,</span> <span class="s1">'islower'</span><span class="p">,</span> <span class="s1">'isspace'</span><span class="p">,</span> <span class="s1">'istitle'</span><span class="p">,</span> <span class="s1">'isupper'</span><span class="p">,</span> <span class="s1">'join'</span><span class="p">,</span> <span class="s1">'ljust'</span><span class="p">,</span> <span class="s1">'lower'</span><span class="p">,</span> <span class="s1">'lstrip'</span><span class="p">,</span> <span class="s1">'maketrans'</span><span class="p">,</span> <span class="s1">'partition'</span><span class="p">,</span> <span class="s1">'replace'</span><span class="p">,</span> <span class="s1">'rfind'</span><span class="p">,</span> <span class="s1">'rindex'</span><span class="p">,</span> <span class="s1">'rjust'</span><span class="p">,</span> <span class="s1">'rpartition'</span><span class="p">,</span> <span class="s1">'rsplit'</span><span class="p">,</span> <span class="s1">'rstrip'</span><span class="p">,</span> <span class="s1">'split'</span><span class="p">,</span> <span class="s1">'splitlines'</span><span class="p">,</span> <span class="s1">'startswith'</span><span class="p">,</span> <span class="s1">'strip'</span><span class="p">,</span> <span class="s1">'swapcase'</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="s1">'translate'</span><span class="p">,</span> <span class="s1">'upper'</span><span class="p">,</span> <span class="s1">'zfill'</span><span class="p">]</span>
+</pre>
+
+
+<p>Okay so our test could be whether or not the <code>texts</code> argument has an attribute <code>capitalize</code>:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">interface_contains_texts</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="s1">'capitalize'</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">texts</span> <span class="ow">in</span> <span class="n">content</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="n">test_content</span> <span class="o">=</span> <span class="s2">"abcdefg qwerty"</span>
+<span class="k">assert</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'abcdefg'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'gfedcba'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="s1">'hello'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'world'</span><span class="p">])</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'olleh'</span><span class="p">)</span>
+</pre>
+
+
+<p>Sort of success, but this feels as if we're not really writing down what we mean. We don't really care if <code>texts</code> has a <code>capitalize</code> attribute at all. What we want to avoid is <code>texts</code> being a single argument that happens to be iterable. We can check which attributes containers such as lists and sets have that strings or bytestrings do not:</p>
+<pre class="code literal-block"><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">list_and_set</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">([])</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">set</span><span class="p">())]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">str_or_bytestring</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span> <span class="o">+</span> <span class="nb">dir</span><span class="p">(</span><span class="n">b</span><span class="s1">''</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">listy_but_not_string</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">list_and_set</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">str_or_bytestring</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">listy_but_not_string</span>
+<span class="p">[</span><span class="s1">'clear'</span><span class="p">,</span> <span class="s1">'copy'</span><span class="p">,</span> <span class="s1">'pop'</span><span class="p">,</span> <span class="s1">'remove'</span><span class="p">]</span>
+</pre>
+
+
+<p>So we can check if the first argument has a 'clear' attribute:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">interface_contains_texts</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="s1">'clear'</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">texts</span> <span class="ow">in</span> <span class="n">content</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="n">test_content</span> <span class="o">=</span> <span class="s2">"abcdefg qwerty"</span>
+<span class="k">assert</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'abcdefg'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'gfedcba'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="s1">'hello'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'world'</span><span class="p">])</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'olleh'</span><span class="p">)</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>Unfortunately, you now cannot pass a generator, the following fails with a type error because <code>interface_contains_texts</code> attempts to check if the generator is in the given string.</p>
+<pre class="code literal-block"><span></span><span class="k">assert</span> <span class="n">interface_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">test_content</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span> 
+</pre>
+
+
+<p>Unfortunately there is no attribute that is on a list, set, and generator that is <em>not</em> on a string or bytestring. But generators do have a <code>close</code> attribute so we could do:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">interface_contains_texts</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="s1">'clear'</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="s1">'close'</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre>
+
+
+<p>This does feel close to what we want. We are saying "If the argument is not a list, set style container, or a generator, then we treat it as one singleton".</p>
+<h3>All of this could be avoided</h3>
+<p>Another way to do this would be to allow a variable number of arguments into the <code>contains_texts</code> function:</p>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">variable_args_contains_texts</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="o">*</span><span class="n">texts</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="n">test_content</span> <span class="o">=</span> <span class="s2">"abcdefg qwerty"</span>
+<span class="k">assert</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'abcdefg'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="s1">'gfedcba'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="s1">'abcdefg'</span><span class="p">,</span> <span class="s1">'qwerty'</span><span class="p">])</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'hello'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'world'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">b</span><span class="s1">'hello world'</span><span class="p">,</span> <span class="n">b</span><span class="s1">'olleh'</span><span class="p">)</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">test_content</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>This works for all our cases. You do have to star the argument if you already have a list or generator:</p>
+<pre class="code literal-block"><span></span><span class="k">assert</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="s1">'abcdefg'</span><span class="p">,</span> <span class="s1">'qwerty'</span><span class="p">])</span> <span class="c1"># Passes</span>
+<span class="k">assert</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">test_content</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span> <span class="c1"># Passes</span>
+</pre>
+
+
+<p>However, recall our original problem was that if you accidentally passed in a single string as the argument your test function may quietly, and erroneously, pass. However, if you forget the star to this function:</p>
+<pre class="code literal-block"><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">variable_args_contains_texts</span><span class="p">(</span><span class="n">test_content</span><span class="p">,</span> <span class="p">[</span><span class="s1">'abcdefg'</span><span class="p">,</span> <span class="s1">'qwerty'</span><span class="p">])</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">"&lt;stdin&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s2">"&lt;stdin&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">3</span><span class="p">,</span> <span class="ow">in</span> <span class="n">variable_args_contains_texts</span>
+<span class="ne">TypeError</span><span class="p">:</span> <span class="s1">'in &lt;string&gt;'</span> <span class="n">requires</span> <span class="n">string</span> <span class="k">as</span> <span class="n">left</span> <span class="n">operand</span><span class="p">,</span> <span class="ow">not</span> <span class="nb">list</span>
+</pre>
+
+
+<p>You get an error. That's quite alright with me, this will flag up immediately that I've written my test incorrectly and I can fix it immediately. Even if I had the original <code>contains_texts</code> and update it to this variable args version, when I re-run my test-suite it will let me know of any places I've forgotten to update the call.</p>
+<h3>Conclusion</h3>
+<p>Its debateable whether or not the <code>interface_contains_texts</code> version was better than the original <code>isintance_contains_texts</code> version. I prefer it because I feel it is a bit more general. I definitely prefer the eventual <code>variable_args_contains_texts</code> version. I guess that's the main conclusion for now, that checking your uses of <code>isinstance</code> may lead to a better implementation.</p>
+<p>Although I was able to use variable arguments to the solve the problem in this case, there will obviously be cases where that fix does not apply. However, the main takeaway is that you don't necessarily have to swap your <code>isinstance</code> use for a <code>hasattr</code> use, thereby directly translating the use of <code>isinstance</code>. It could be that by having a slightly broader look at the general problem you're trying to solve, another solution is available.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/containers/" rel="tag">containers</a></li>
+            <li><a class="tag p-category" href="../../categories/isinstance/" rel="tag">isinstance</a></li>
+            <li><a class="tag p-category" href="../../categories/lists/" rel="tag">lists</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../login-not-required-pattern/" rel="prev" title="Login not required pattern">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="allanderek",
+            disqus_url="https://allanderek.github.io/posts/list-arguments-and-isinstance/",
+        disqus_title="List arguments and isinstance",
+        disqus_identifier="cache/posts/list-arguments-and-isinstance.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="allanderek";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2017         <a href="mailto:allan.clark@gmail.com">Allan Clark</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

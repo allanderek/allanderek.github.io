@@ -11,11 +11,15 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/code-maintenance.xml</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-26T10:42:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/coding-style.xml</loc>
   <lastmod>2017-01-03T16:39:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/containers.xml</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/coverage.xml</loc>
@@ -31,7 +35,15 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/flask.xml</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-26T10:42:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/isinstance.xml</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/lists.xml</loc>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/maintenance.xml</loc>
@@ -43,7 +55,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/python.xml</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/scc.xml</loc>
@@ -71,10 +83,10 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/rss.xml</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2017-01-26T00:05:00Z</lastmod>
+  <lastmod>2017-01-28T12:57:00Z</lastmod>
  </sitemap>
 </sitemapindex>
