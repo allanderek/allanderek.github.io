@@ -1,0 +1,19 @@
+To post to the blog you probably want to do:
+
+$ source new_post.sh "title" "comma, separated, tags"
+
+Then write your post in the resulting posts/title.md.
+You can check out how it looks with:
+
+$ source auto.sh
+
+Which will continually rebuild every time you save a file.
+
+When you're ready to post, you probably want to do:
+
+$ git add /posts/title.md
+$ git commit -m "Added a new post"
+$ git push origin source
+$ nikola github_deploy
+
+Then check it out on: http://allanderek.github.io/
