@@ -63,7 +63,38 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/update-flask%2Bcoverage/" class="u-url">Update: Flask+Coverage</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/import-placement/" class="u-url">Placement of Python Import Statements</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Allan Clark
+            </span></p>
+            <p class="dateline"><a href="posts/import-placement/" rel="bookmark"><time class="published dt-published" datetime="2016-02-03T13:08:54Z" title="2016-02-03 13:08">2016-02-03 13:08</time></a></p>
+                <p class="commentline">
+        
+    <a href="posts/import-placement/#disqus_thread" data-disqus-identifier="cache/posts/import-placement.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p><a href="https://www.python.org/dev/peps/pep-0008/#imports">Pep 8 specifies</a>
+that all import statements should be "put at the top of the file, just after any
+module comments and docstrings, and before module globals and constants."
+However, it does not really specify the logic behind this. I'm going to try to
+articulate some reasons to have import statements somewhere other than directly
+at the top of the file. I'll also state some arguments for having such
+<code>import</code> statements at the top.</p>
+<p>Note, that
+<a href="https://www.python.org/dev/peps/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds">Pep 8 also specifies</a>
+that it is important to "know when to be inconsistent -- sometimes the style guide just doesn't
+apply. When in doubt, use your best judgment". So the purpose of this post is to
+suggest some reasons why you might deviate from the style guide with respect to
+<code>import</code> statements at the top.</p>
+<p class="more"><a href="posts/import-placement/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/update-flask%2Bcoverage/" class="u-url">Update: Flask+Coverage</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn">
                 Allan Clark

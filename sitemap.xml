@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/archive.html</loc>
-  <lastmod>2017-01-28T12:57:00Z</lastmod>
+  <lastmod>2017-02-07T15:12:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/</loc>
-  <lastmod>2017-01-28T12:57:00Z</lastmod>
+  <lastmod>2017-02-07T15:12:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/casperjs/</loc>
@@ -78,6 +78,10 @@
   <lastmod>2016-05-29T20:05:00Z</lastmod>
  </url>
  <url>
+  <loc>https://allanderek.github.io/categories/refactoring/</loc>
+  <lastmod>2017-02-07T15:12:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://allanderek.github.io/categories/scc/</loc>
   <lastmod>2016-05-29T20:05:00Z</lastmod>
  </url>
@@ -103,7 +107,7 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/index-1.html</loc>
-  <lastmod>2017-01-28T12:57:00Z</lastmod>
+  <lastmod>2017-02-07T15:12:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/covering-dead-code/</loc>
@@ -140,6 +144,10 @@
  <url>
   <loc>https://allanderek.github.io/posts/method-cascading/</loc>
   <lastmod>2016-05-29T20:05:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/posts/minor-refactorings/</loc>
+  <lastmod>2017-02-07T15:12:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/selenium-and-casper/</loc>
