@@ -1,5 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet</title><link>https://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link type="application/rss+xml" rel="self" href="https://allanderek.github.io/rss.xml"></atom:link><language>en</language><lastBuildDate>Tue, 07 Feb 2017 15:52:15 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Minor Refactorings</title><link>https://allanderek.github.io/posts/minor-refactorings/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Looking through the code of an open-source Python project I came across code that amounts to the following:&lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet</title><link>https://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link href="https://allanderek.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Fri, 10 Feb 2017 15:22:42 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Python and Lambdas</title><link>https://allanderek.github.io/posts/python-and-lambdas/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;I come from a functional programming background, so I a lot of love for functions and so-called anonymous functions or lambdas. However, I have realised that I don't make use of Python's lambda syntax much, and I wanted to articulate why. This may mostly sound pretty negative towards lambdas, but bear in mind I'm certainly not against lambdas in general.&lt;/p&gt;
+&lt;p&gt;A &lt;code&gt;lambda&lt;/code&gt; expression could always be avoided by simply defining the function in question. So the question becomes when is a &lt;code&gt;lambda&lt;/code&gt; more readable than a definition? That is almost always because the function you're attempting to create is so simple that the definition syntax gets in the way. It is often used when the function in question is going to be used as an argument to some method. For example the &lt;code&gt;sort&lt;/code&gt; method on a list takes as argument they &lt;code&gt;key&lt;/code&gt; to be used when comparing the elements. So if you have a list of items and you want to sort them by their prices you can do something such as:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;We could of course have gotten the use of &lt;code&gt;lambda&lt;/code&gt; with a definition:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;price&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;This is not &lt;strong&gt;quite&lt;/strong&gt; equivalent because it introduces a new name into the current scope that would not otherwise have been there, but I don't ever recall reaching for a &lt;code&gt;lambda&lt;/code&gt; expression in order to avoid polluting the name space.&lt;/p&gt;
+&lt;p&gt;We could even define a generic higher-order function to make a function out of attribute access.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;f_attr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attr_name&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;attr_getter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;getattr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attr_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;attr_getter&lt;/span&gt;
+
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;f_attr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'price'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;This is surely worse than the first two attempts, but if you have multiple sorts to do, then using definitions can get tedious:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;price&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;quantity&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;quantity&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;quantity&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;margin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;margin&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;margin&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;as compared with the lambda version:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;quantity&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;margin&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;f_attr&lt;/code&gt; version is similar:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;f_attr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'price'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;f_attr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'quantity'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;f_attr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'margin'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;In fact that could be done with a loop:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;attribute&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'price'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'quantity'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'margin'&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt;
+    &lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;f_attr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;list_of_items&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;I think the &lt;code&gt;lambda&lt;/code&gt; version is at least sometimes more readable. However, I often miss the self-documenting nature of a definition, in that giving the function a name acts as some pretty decent documentation especially for the kind of simple function you might otherwise use a &lt;code&gt;lambda&lt;/code&gt; expression for.&lt;/p&gt;
+&lt;p&gt;So, for a &lt;code&gt;lambda&lt;/code&gt; expression to be the right choice, the function in question has to be so simple as to not benefit from the extra documentation afforded by its name (such as simple attribute access). &lt;/p&gt;
+&lt;p&gt;I just don't seem to find myself in that situation very often. Perhaps I'm just not making my own functions general enough by accepting functions as arguments.&lt;/p&gt;&lt;/div&gt;</description><category>lambda</category><category>python</category><guid>https://allanderek.github.io/posts/python-and-lambdas/</guid><pubDate>Fri, 10 Feb 2017 14:39:20 GMT</pubDate></item><item><title>Minor Refactorings</title><link>https://allanderek.github.io/posts/minor-refactorings/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Looking through the code of an open-source Python project I came across code that amounts to the following:&lt;/p&gt;
 &lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="n"&gt;host_name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;connection&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getsockname&lt;/span&gt;&lt;span class="p"&gt;()[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
     &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;host_name&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
         &lt;span class="n"&gt;host_name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;host_name&lt;/span&gt;
@@ -1334,69 +1405,4 @@ print('After uppercase then capitalize:', duplicate.rep())
 &lt;p&gt;Now it is obvious that &lt;code&gt;dup&lt;/code&gt; returns something new, in this case it is a
 duplicate of the original string. It is also clear that &lt;code&gt;uppercase&lt;/code&gt; and
 &lt;code&gt;capitalize&lt;/code&gt; do &lt;em&gt;not&lt;/em&gt; return new objects but modify the &lt;code&gt;duplicate&lt;/code&gt; object.&lt;/p&gt;
-&lt;p&gt;So, I'm afraid I just don't see the use case for cascading.&lt;/p&gt;&lt;/div&gt;</description><category>coding style</category><category>python</category><guid>https://allanderek.github.io/posts/method-cascading/</guid><pubDate>Tue, 23 Feb 2016 14:54:35 GMT</pubDate></item><item><title>Test First and Mutation Testing</title><link>https://allanderek.github.io/posts/test-first-mutation-testing/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;h2&gt;Test First and Mutation Testing&lt;/h2&gt;
-&lt;p&gt;I'm going to argue that mutation testing has a strong use in a test first
-development environment and I'll conclude by proposing a mechanism to link
-mutation testing to the source code control mechanism to further aid test first
-development.&lt;/p&gt;
-&lt;h3&gt;Test First&lt;/h3&gt;
-&lt;p&gt;Just to be clear, when I say 'test first' I mean development in which before
-writing a feature, or fixing a bug, you first write a test which should only
-pass once you have completed that feature. For the purposes of this post you
-needn't be doing that for every line of code you write. The idea here applies
-whether you are writing the odd feature by first writing a test for it, or
-whether you have a strict policy of writing no code until there is a test for
-it.&lt;/p&gt;
-&lt;h3&gt;Mutation Testing&lt;/h3&gt;
-&lt;p&gt;Mutation testing is the process of automatically changing some parts of your
-source code generally to check that your test suite is not indifferent to the
-change. For example, your source code may contain a conditional statement
-such as the following:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;Now if we suppose that the current condition is correct, then changing it to
-a similar but different condition, for example &lt;code&gt;x &amp;gt;= 0&lt;/code&gt; or &lt;code&gt;x &amp;gt; 1&lt;/code&gt; then
-presumably this would turn correct code into incorrect code. If your tests are
-comprehensive then at least one of them should fail due to the now incorrect
-code.&lt;/p&gt;
-&lt;h3&gt;Fail First&lt;/h3&gt;
-&lt;p&gt;It's easy enough to unintentionally write a test that always passes, or perhaps
-passes too easily. One of the reasons for writing the test first is to make sure
-that it fails when the feature has not yet been implemented (or fixed). However,
-often such a test can fail for trivial reasons. For example you may write a unit
-test that fails simple because the method it tests is not yet defined. Similarly
-a web test may fail because the route is not yet defined. Unless you continue to
-run the test during development of your feature you won't necessarily know that
-your test is particularly effective at catching when your feature is broken.&lt;/p&gt;
-&lt;h3&gt;Fail After&lt;/h3&gt;
-&lt;p&gt;Whether you write the test before your new feature or after the feature is
-ready, mutation testing can assist with the problem of non-stringent tests.
-Mutation testing can assist in reassuring you that your new test is effective at
-catching errors, whether those errors are introduced when the feature is
-developed or through later changes. If you apply lots of mutations to your code
-and your new test never fails then there is a strong likelihood that you have an
-ineffective test that passes too easily.&lt;/p&gt;
-&lt;h3&gt;Source Code control&lt;/h3&gt;
-&lt;p&gt;A feature I would like to add to a mutation test package is to integrate with
-a source code control mechanism such as Git. The mutation tester must choose
-lines of the program to mutate. However, your new test is presumably aimed at
-testing the new code that you write. Hence we could use the source code control
-mechanism to mutate lines of code that are newer than the test or some specified
-commit. That way we would focus our mutation testing to testing the efficacy of
-the new test(s) with respect to the new or changed lines of code.&lt;/p&gt;
-&lt;p&gt;This does not preclude doing general mutation testing for features that, for
-example, depend upon a lot of existing code. Perhaps your new feature is simply
-a display of existing calculations.&lt;/p&gt;
-&lt;h3&gt;Conclusion&lt;/h3&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Mutation testing helps find tests that are ineffective.&lt;/li&gt;
-&lt;li&gt;This plays particularly well with a test first development process in which
-    the test often fails the first time for trivial reasons, thus giving you
-    false assurance that your test can fail.&lt;/li&gt;
-&lt;li&gt;Integrating source code control to target the mutations towards new code
-    could improve this significantly, or at least make it a bit more convenient.&lt;/li&gt;
-&lt;/ul&gt;&lt;/div&gt;</description><category>mutation testing</category><category>python</category><category>scc</category><category>testing</category><guid>https://allanderek.github.io/posts/test-first-mutation-testing/</guid><pubDate>Fri, 19 Feb 2016 10:14:43 GMT</pubDate></item></channel></rss>
+&lt;p&gt;So, I'm afraid I just don't see the use case for cascading.&lt;/p&gt;&lt;/div&gt;</description><category>coding style</category><category>python</category><guid>https://allanderek.github.io/posts/method-cascading/</guid><pubDate>Tue, 23 Feb 2016 14:54:35 GMT</pubDate></item></channel></rss>
