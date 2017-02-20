@@ -10,7 +10,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://allanderek.github.io/">
 <link rel="next" href="index-1.html" type="text/html">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/python-and-lambdas/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/flask-and-pytest-coverage/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -63,7 +63,163 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/python-and-lambdas/" class="u-url">Python and Lambdas</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/flask-and-pytest-coverage/" class="u-url">Flask and Pytest coverage</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Allan Clark
+            </span></p>
+            <p class="dateline"><a href="posts/flask-and-pytest-coverage/" rel="bookmark"><time class="published dt-published" datetime="2017-02-20T16:27:27Z" title="2017-02-20 16:27">2017-02-20 16:27</time></a></p>
+                <p class="commentline">
+        
+    <a href="posts/flask-and-pytest-coverage/#disqus_thread" data-disqus-identifier="cache/posts/flask-and-pytest-coverage.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>I have written before about Flask and obtaining test coverage results
+<a href="posts/flask-%2B-coverage-analysis">here</a>
+and with an update
+<a href="posts/update-flask%2Bcoverage">here</a>.
+This is pretty trivial if you're writing unit tests that directly call the application, but if you actually want to write tests which animate a browser, for example with selenium, then it's a little more complicated, because the browser/test code has to run concurrently with the server code.</p>
+<p>Previously I would have the Flask server run in a separate process and run 'coverage' over that process. This was slightly unsatisfying, partly because you sometimes want coverage analysis of your actual tests. Test suites, just like application code, can grow in size with many utility functions and imports etc. which may eventually end up not actually being used. So it is good to know that you're not needlessly maintaining some test code which is not actually invoked.</p>
+<p>We could probably get around this restriction by running coverage in both the server process and the test-runner's process and combine the results (or simply view them separately). However, this was unsatisfying simply because it felt like something that should not be necessary. Today I spent a bit of time setting up the scheme to test a Flask application without the need for a separate process.</p>
+<p>I solved this now, by not using Flask's included Werkzeug server and instead using the WSGI server included in the standard-library <code>wsgiref.simple_server</code> module. Here is, a minimal example:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">flask</span>
+
+<span class="k">class</span> <span class="nc">Configuration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">TEST_SERVER_PORT</span> <span class="o">=</span> <span class="mi">5001</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">Configuration</span><span class="p">)</span>
+
+
+<span class="nd">@application.route</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">frontpage</span><span class="p">():</span>
+    <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c1"># Should not be covered</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'I am the lizard queen!'</span> <span class="c1"># Should be in coverage.</span>
+
+
+
+<span class="c1"># Now for some testing.</span>
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.action_chains</span> <span class="kn">import</span> <span class="n">ActionChains</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="c1"># Currently just used for the temporary hack to quit the phantomjs process</span>
+<span class="c1"># see below in quit_driver.</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="kn">import</span> <span class="nn">wsgiref.simple_server</span>
+
+<span class="k">class</span> <span class="nc">ServerThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TESTING'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpd</span> <span class="o">=</span> <span class="n">wsgiref</span><span class="o">.</span><span class="n">simple_server</span><span class="o">.</span><span class="n">make_server</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">application</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpd</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">BrowserClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""Interacts with a running instance of the application via animating a</span>
+<span class="sd">    browser."""</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s2">"phantom"</span><span class="p">):</span>
+        <span class="n">driver_class</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'phantom'</span><span class="p">:</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">PhantomJS</span><span class="p">,</span>
+            <span class="s1">'chrome'</span><span class="p">:</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">,</span>
+            <span class="s1">'firefox'</span><span class="p">:</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span>
+            <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">browser</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">driver_class</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">set_window_size</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">760</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># A bit of hack this but currently there is some bug I believe in</span>
+        <span class="c1"># the phantomjs code rather than selenium, but in any case it means that</span>
+        <span class="c1"># the phantomjs process is not being killed so we do so explicitly here</span>
+        <span class="c1"># for the time being. Obviously we can remove this when that bug is</span>
+        <span class="c1"># fixed. See: https://github.com/SeleniumHQ/selenium/issues/767</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">log_current_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_basename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">page_source</span>
+        <span class="c1"># This is frequently what we really care about so I also output it</span>
+        <span class="c1"># here as well to make it convenient to inspect (with highlighting).</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">output_basename</span> <span class="ow">or</span> <span class="s1">'log-current-page'</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">'.html'</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+                <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;!-- {} --&gt; "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">'.png'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">save_screenshot</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">make_url</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">application</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">url_for</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="c1"># TODO: Ultimately we'll need a fixture so that we can have multiple</span>
+<span class="c1"># test functions that all use the same server thread and possibly the same</span>
+<span class="c1"># browser client.</span>
+<span class="k">def</span> <span class="nf">test_server</span><span class="p">():</span>
+    <span class="n">server_thread</span> <span class="o">=</span> <span class="n">ServerThread</span><span class="p">()</span>
+    <span class="n">server_thread</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="n">server_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">BrowserClient</span><span class="p">()</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">driver</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+        <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'SERVER_NAME'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'localhost:{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+
+        <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">make_url</span><span class="p">(</span><span class="s1">'frontpage'</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="s1">'I am the lizard queen!'</span> <span class="ow">in</span> <span class="n">driver</span><span class="o">.</span><span class="n">page_source</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+        <span class="n">server_thread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">server_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre>
+
+
+<p>To run this you will of course need <code>flask</code> as well as <code>pytest</code>, <code>pytest-cov</code>, and <code>selenium</code>:</p>
+<pre class="code literal-block"><span></span>$ pip install flask pytest pytest-cov
+</pre>
+
+
+<p>In addition you will need the <code>phantomjs</code> to run:</p>
+<pre class="code literal-block"><span></span>$ npm install phantomjs
+$ <span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:./node_modules/.bin/
+</pre>
+
+
+<p>Then to run it, the command is:</p>
+<pre class="code literal-block"><span></span>$ py.test --cov<span class="o">=</span>./ app.py
+$ coverage html
+</pre>
+
+
+<p>The <code>coverage html</code> is of course optional and only if you wish to view the results in friendly HTML format.</p>
+<h3>Notes</h3>
+<p>I've not used this extensively myself yet, so there may be some problems when using a more interesting flask application.</p>
+<p>Don't put your virtual environment directory in the same directory as <code>app.py</code> because in that case it will perform coverage analysis over the standard library and dependencies.</p>
+<p>In a real application you will probably want to make a <code>pytest</code> fixture out of the server thread and browser client. So that you can use each for multiple separate test functions. Essentially your test function should just be the part inside the <code>try</code> clause.</p>
+<p>I have used the <code>log_current_page</code> method but I frequently find it quite useful so included it here nonetheless.</p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/python-and-lambdas/" class="u-url">Python and Lambdas</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn">
                 Allan Clark
@@ -1552,102 +1708,6 @@ to check the results of a Javascript event.</p>
 <p>This can solve problems of getting a <code>StaleElementReferenceException</code> or a
 <code>NoSuchElementException</code> because your Selenium test is running a check on an
 element too early before your page has been updated.</p>
-</div>
-    </div>
-    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/method-cascading/" class="u-url">Method Cascading</a></h1>
-        <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">
-                Allan Clark
-            </span></p>
-            <p class="dateline"><a href="posts/method-cascading/" rel="bookmark"><time class="published dt-published" datetime="2016-02-23T14:54:35Z" title="2016-02-23 14:54">2016-02-23 14:54</time></a></p>
-                <p class="commentline">
-        
-    <a href="posts/method-cascading/#disqus_thread" data-disqus-identifier="cache/posts/method-cascading.html">Comments</a>
-
-
-        </p>
-</div>
-    </header><div class="p-summary entry-summary">
-    <div>
-<h2>Method Cascading</h2>
-<p>Vasudev Ram has a thoughful <a href="http://jugad2.blogspot.co.uk/2016/02/examples-of-method-chaining-in-python.html">post about method chaining/cascading</a>
-that I picked up from <a href="http://planetpython.org/">planet python</a> in which he
-basically argues for the use of method cascading. I'm going to disagree.
-Essentially, I simply don't understand any benefit of using cascading. It's a
-nice post though and includes some references to other method cascading links.</p>
-<p>Method chaining is the writing of multiple method calls directly after one
-another, usually on the same line, such as (to take Vasudev's example):</p>
-<pre class="code literal-block"><span></span>foo.bar().baz()
-</pre>
-
-
-<p>Cascading is the specific case of chaining in which each intermediate object
-is the same object. To achieve this <code>bar</code> must return <code>self</code> (in Python, or
-<code>this</code> in other object oriented languages).</p>
-<p>Here is Vasudev's first example:</p>
-<blockquote>
-<p>Let's say we have a class Foo that contains two methods, bar and baz.
-We create an instance of the class Foo:</p>
-<pre class="code literal-block"><span></span>foo = Foo()
-</pre>
-
-
-<p>Without method chaining, to call both bar and baz in turn, on the object foo, we would do this:</p>
-<pre class="code literal-block"><span></span># Fragment 1
-foo.bar() # Call method bar() on object foo.
-foo.baz() # Call method baz() on object foo.
-</pre>
-
-
-<p>With method chaining, we can this:</p>
-<pre class="code literal-block"><span></span># Fragment 2
-# Chain calls to methods bar() and baz() on object foo.
-foo.bar().baz()
-</pre>
-
-
-</blockquote>
-<p>So the claim for method cascading then is:</p>
-<blockquote>
-<p>One advantage of method chaining is that it reduces the number of times you
-have to use the name of the object: only once in Fragment 2 above, vs. twice
-in Fragment 1; and this difference will increase when there are more method
-calls on the same object. Thereby, it also slightly reduces the amount of code
-one has to read, understand, test, debug and maintain, overall.
-Not major benefits, but can be useful.</p>
-</blockquote>
-<p>So method cascading reduces the number of times you have to use the name of an
-object, but this makes it inherently less explicit that you're operating on the
-same object. Looking at <code>foo.bar().baz()</code> does not tell me that <code>baz</code> is being
-called on the same object as <code>bar</code>. Unless you're keen on method cascading and
-use it yourself, it looks like the opposite.</p>
-<p>Method cascading may therefore reduce</p>
-<blockquote>
-<p>the amount of code one has to read, understand, test, debug and maintain, overall.</p>
-</blockquote>
-<p>However it does so, only in a "code-golf" way. There is no point in reducing
-the amount of code to understand if by doing so you increase the difficulty with
-which you can understand it.</p>
-<p>A common example of method cascading is one Vasudev includes, that of string
-processing. Here we have a line such as (which I've translated into Python 3):</p>
-<pre class="code literal-block"><span></span>print ('After uppercase then capitalize:',
-        sp.dup().uppercase().capitalize().rep())
-</pre>
-
-
-<p>Whilst it is quite nice to be able to do this in one line without using a new
-variable name, I would write this without method cascading as:</p>
-<pre class="code literal-block"><span></span>duplicate = sp.dup()
-duplicate.uppercase()
-duplicate.capitalize()
-print('After uppercase then capitalize:', duplicate.rep())
-</pre>
-
-
-<p>Now it is obvious that <code>dup</code> returns something new, in this case it is a
-duplicate of the original string. It is also clear that <code>uppercase</code> and
-<code>capitalize</code> do <em>not</em> return new objects but modify the <code>duplicate</code> object.</p>
-<p>So, I'm afraid I just don't see the use case for cascading.</p>
 </div>
     </div>
     </article>

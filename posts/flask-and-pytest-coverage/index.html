@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flask and Pytest coverage | Coding Diet</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta content="#5670d4" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://allanderek.github.io/posts/flask-and-pytest-coverage/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Allan Clark">
+<link rel="prev" href="../python-and-lambdas/" title="Python and Lambdas" type="text/html">
+<meta property="og:site_name" content="Coding Diet">
+<meta property="og:title" content="Flask and Pytest coverage">
+<meta property="og:url" content="https://allanderek.github.io/posts/flask-and-pytest-coverage/">
+<meta property="og:description" content="I have written before about Flask and obtaining test coverage results
+here
+and with an update
+here.
+This is pretty trivial if you're writing unit tests that directly call the application, but if you a">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2017-02-20T16:27:27Z">
+<meta property="article:tag" content="coverage">
+<meta property="article:tag" content="flask">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="tests">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://allanderek.github.io/">
+
+                <span id="blog-title">Coding Diet</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+                </li>
+<li>
+<a href="../../stories/curriculum-vitae/">CV</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.md" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Flask and Pytest coverage</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                    Allan Clark
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2017-02-20T16:27:27Z" itemprop="datePublished" title="2017-02-20 16:27">2017-02-20 16:27</time></a></p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/flask-and-pytest-coverage.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.md" id="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>I have written before about Flask and obtaining test coverage results
+<a href="../flask-%2B-coverage-analysis">here</a>
+and with an update
+<a href="../update-flask%2Bcoverage">here</a>.
+This is pretty trivial if you're writing unit tests that directly call the application, but if you actually want to write tests which animate a browser, for example with selenium, then it's a little more complicated, because the browser/test code has to run concurrently with the server code.</p>
+<p>Previously I would have the Flask server run in a separate process and run 'coverage' over that process. This was slightly unsatisfying, partly because you sometimes want coverage analysis of your actual tests. Test suites, just like application code, can grow in size with many utility functions and imports etc. which may eventually end up not actually being used. So it is good to know that you're not needlessly maintaining some test code which is not actually invoked.</p>
+<p>We could probably get around this restriction by running coverage in both the server process and the test-runner's process and combine the results (or simply view them separately). However, this was unsatisfying simply because it felt like something that should not be necessary. Today I spent a bit of time setting up the scheme to test a Flask application without the need for a separate process.</p>
+<p>I solved this now, by not using Flask's included Werkzeug server and instead using the WSGI server included in the standard-library <code>wsgiref.simple_server</code> module. Here is, a minimal example:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">flask</span>
+
+<span class="k">class</span> <span class="nc">Configuration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">TEST_SERVER_PORT</span> <span class="o">=</span> <span class="mi">5001</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">Configuration</span><span class="p">)</span>
+
+
+<span class="nd">@application.route</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">frontpage</span><span class="p">():</span>
+    <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c1"># Should not be covered</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'I am the lizard queen!'</span> <span class="c1"># Should be in coverage.</span>
+
+
+
+<span class="c1"># Now for some testing.</span>
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.action_chains</span> <span class="kn">import</span> <span class="n">ActionChains</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="c1"># Currently just used for the temporary hack to quit the phantomjs process</span>
+<span class="c1"># see below in quit_driver.</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="kn">import</span> <span class="nn">wsgiref.simple_server</span>
+
+<span class="k">class</span> <span class="nc">ServerThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TESTING'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpd</span> <span class="o">=</span> <span class="n">wsgiref</span><span class="o">.</span><span class="n">simple_server</span><span class="o">.</span><span class="n">make_server</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">application</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpd</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">BrowserClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""Interacts with a running instance of the application via animating a</span>
+<span class="sd">    browser."""</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="s2">"phantom"</span><span class="p">):</span>
+        <span class="n">driver_class</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'phantom'</span><span class="p">:</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">PhantomJS</span><span class="p">,</span>
+            <span class="s1">'chrome'</span><span class="p">:</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">,</span>
+            <span class="s1">'firefox'</span><span class="p">:</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span>
+            <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">browser</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">driver_class</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">set_window_size</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">760</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># A bit of hack this but currently there is some bug I believe in</span>
+        <span class="c1"># the phantomjs code rather than selenium, but in any case it means that</span>
+        <span class="c1"># the phantomjs process is not being killed so we do so explicitly here</span>
+        <span class="c1"># for the time being. Obviously we can remove this when that bug is</span>
+        <span class="c1"># fixed. See: https://github.com/SeleniumHQ/selenium/issues/767</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">log_current_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_basename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">page_source</span>
+        <span class="c1"># This is frequently what we really care about so I also output it</span>
+        <span class="c1"># here as well to make it convenient to inspect (with highlighting).</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">output_basename</span> <span class="ow">or</span> <span class="s1">'log-current-page'</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">'.html'</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+                <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;!-- {} --&gt; "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">'.png'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">save_screenshot</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">make_url</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">application</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">url_for</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="c1"># TODO: Ultimately we'll need a fixture so that we can have multiple</span>
+<span class="c1"># test functions that all use the same server thread and possibly the same</span>
+<span class="c1"># browser client.</span>
+<span class="k">def</span> <span class="nf">test_server</span><span class="p">():</span>
+    <span class="n">server_thread</span> <span class="o">=</span> <span class="n">ServerThread</span><span class="p">()</span>
+    <span class="n">server_thread</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="n">server_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">BrowserClient</span><span class="p">()</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">driver</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'TEST_SERVER_PORT'</span><span class="p">]</span>
+        <span class="n">application</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'SERVER_NAME'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'localhost:{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+
+        <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">make_url</span><span class="p">(</span><span class="s1">'frontpage'</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="s1">'I am the lizard queen!'</span> <span class="ow">in</span> <span class="n">driver</span><span class="o">.</span><span class="n">page_source</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+        <span class="n">server_thread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">server_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre>
+
+
+<p>To run this you will of course need <code>flask</code> as well as <code>pytest</code>, <code>pytest-cov</code>, and <code>selenium</code>:</p>
+<pre class="code literal-block"><span></span>$ pip install flask pytest pytest-cov
+</pre>
+
+
+<p>In addition you will need the <code>phantomjs</code> to run:</p>
+<pre class="code literal-block"><span></span>$ npm install phantomjs
+$ <span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:./node_modules/.bin/
+</pre>
+
+
+<p>Then to run it, the command is:</p>
+<pre class="code literal-block"><span></span>$ py.test --cov<span class="o">=</span>./ app.py
+$ coverage html
+</pre>
+
+
+<p>The <code>coverage html</code> is of course optional and only if you wish to view the results in friendly HTML format.</p>
+<h3>Notes</h3>
+<p>I've not used this extensively myself yet, so there may be some problems when using a more interesting flask application.</p>
+<p>Don't put your virtual environment directory in the same directory as <code>app.py</code> because in that case it will perform coverage analysis over the standard library and dependencies.</p>
+<p>In a real application you will probably want to make a <code>pytest</code> fixture out of the server thread and browser client. So that you can use each for multiple separate test functions. Essentially your test function should just be the part inside the <code>try</code> clause.</p>
+<p>I have used the <code>log_current_page</code> method but I frequently find it quite useful so included it here nonetheless.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/coverage/" rel="tag">coverage</a></li>
+            <li><a class="tag p-category" href="../../categories/flask/" rel="tag">flask</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+            <li><a class="tag p-category" href="../../categories/tests/" rel="tag">tests</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../python-and-lambdas/" rel="prev" title="Python and Lambdas">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="allanderek",
+            disqus_url="https://allanderek.github.io/posts/flask-and-pytest-coverage/",
+        disqus_title="Flask and Pytest coverage",
+        disqus_identifier="cache/posts/flask-and-pytest-coverage.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="allanderek";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2017         <a href="mailto:allan.clark@gmail.com">Allan Clark</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

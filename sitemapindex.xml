@@ -23,7 +23,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/coverage.xml</loc>
-  <lastmod>2017-01-03T17:23:00Z</lastmod>
+  <lastmod>2017-02-20T17:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/dead-code.xml</loc>
@@ -35,7 +35,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/flask.xml</loc>
-  <lastmod>2017-01-26T10:42:00Z</lastmod>
+  <lastmod>2017-02-20T17:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/isinstance.xml</loc>
@@ -43,7 +43,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/lambda.xml</loc>
-  <lastmod>2017-02-10T15:17:00Z</lastmod>
+  <lastmod>2017-02-10T15:22:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/lists.xml</loc>
@@ -59,7 +59,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/python.xml</loc>
-  <lastmod>2017-02-10T15:17:00Z</lastmod>
+  <lastmod>2017-02-20T17:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/refactoring.xml</loc>
@@ -86,15 +86,19 @@
   <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://allanderek.github.io/categories/tests.xml</loc>
+  <lastmod>2017-02-20T17:08:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://allanderek.github.io/categories/typing.xml</loc>
   <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/rss.xml</loc>
-  <lastmod>2017-02-10T15:17:00Z</lastmod>
+  <lastmod>2017-02-20T17:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2017-02-10T15:17:00Z</lastmod>
+  <lastmod>2017-02-20T17:08:00Z</lastmod>
  </sitemap>
 </sitemapindex>
