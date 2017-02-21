@@ -195,7 +195,7 @@ This is pretty trivial if you're writing unit tests that directly call the appli
 
 
 <p>To run this you will of course need <code>flask</code> as well as <code>pytest</code>, <code>pytest-cov</code>, and <code>selenium</code>:</p>
-<pre class="code literal-block"><span></span>$ pip install flask pytest pytest-cov
+<pre class="code literal-block"><span></span>$ pip install flask pytest pytest-cov selenium
 </pre>
 
 
@@ -216,7 +216,7 @@ $ coverage html
 <p>I've not used this extensively myself yet, so there may be some problems when using a more interesting flask application.</p>
 <p>Don't put your virtual environment directory in the same directory as <code>app.py</code> because in that case it will perform coverage analysis over the standard library and dependencies.</p>
 <p>In a real application you will probably want to make a <code>pytest</code> fixture out of the server thread and browser client. So that you can use each for multiple separate test functions. Essentially your test function should just be the part inside the <code>try</code> clause.</p>
-<p>I have used the <code>log_current_page</code> method but I frequently find it quite useful so included it here nonetheless.</p>
+<p>I have not used the <code>log_current_page</code> method but I frequently find it quite useful so included it here nonetheless.</p>
 </div>
     </div>
     </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/python-and-lambdas/" class="u-url">Python and Lambdas</a></h1>

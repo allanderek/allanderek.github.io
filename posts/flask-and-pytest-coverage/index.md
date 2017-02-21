@@ -132,7 +132,7 @@ def test_server():
 To run this you will of course need `flask` as well as `pytest`, `pytest-cov`, and `selenium`:
 
 ```shell
-$ pip install flask pytest pytest-cov
+$ pip install flask pytest pytest-cov selenium
 ```
 
 In addition you will need the `phantomjs` to run:
@@ -159,4 +159,4 @@ Don't put your virtual environment directory in the same directory as `app.py` b
 
 In a real application you will probably want to make a `pytest` fixture out of the server thread and browser client. So that you can use each for multiple separate test functions. Essentially your test function should just be the part inside the `try` clause.
 
-I have used the `log_current_page` method but I frequently find it quite useful so included it here nonetheless.
+I have not used the `log_current_page` method but I frequently find it quite useful so included it here nonetheless.
