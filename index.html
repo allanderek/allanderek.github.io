@@ -10,7 +10,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://allanderek.github.io/">
 <link rel="next" href="index-1.html" type="text/html">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/flask-and-pytest-coverage/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/unittestmock-small-gotcha/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -63,7 +63,134 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/flask-and-pytest-coverage/" class="u-url">Flask and Pytest coverage</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/unittestmock-small-gotcha/" class="u-url">unittest.mock small gotcha - a humbling tale of failure</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Allan Clark
+            </span></p>
+            <p class="dateline"><a href="posts/unittestmock-small-gotcha/" rel="bookmark"><time class="published dt-published" datetime="2017-02-25T12:36:24Z" title="2017-02-25 12:36">2017-02-25 12:36</time></a></p>
+                <p class="commentline">
+        
+    <a href="posts/unittestmock-small-gotcha/#disqus_thread" data-disqus-identifier="cache/posts/unittestmock-small-gotcha.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>Developing a small web application I recently had reason to upgrade from Python 3.4 to Python 3.6. The reason for the upgrade was regarding ordering of keyword arguments and not related to the bug in my test code that I then found. I should have been more careful writing my test code in the first place, so I am writing this down as some penance for not testing my tests robustly enough.</p>
+<h3>A Simple example program</h3>
+<p>So here I have a version of the problem reduced down to the minimum required to demonstrate the issue:</p>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">unittest.mock</span> <span class="kn">as</span> <span class="nn">mock</span>
+
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">'__main__.MyClass'</span><span class="p">)</span> <span class="k">as</span> <span class="n">MockMyClass</span><span class="p">:</span>
+        <span class="n">MyClass</span><span class="p">()</span><span class="o">.</span><span class="n">my_method</span><span class="p">()</span>
+        <span class="n">MockMyClass</span><span class="o">.</span><span class="n">my_method</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+</pre>
+
+
+<p>Of course in reality the line <code>MyClass().my_method()</code> was some test code that indirectly caused the target method to be called.</p>
+<h4>Output in Python 3.4</h4>
+<pre class="code literal-block"><span></span>$ python3.4 mock_example.py
+$
+</pre>
+
+
+<p>No output, leading me to believe my assertions passed, so I was happy that my code and my tests were working. As it turned out, my code was fine but my test was faulty. Here's the output in two later versions of Python of the exact same program given above.</p>
+<h4>Output in Python 3.5</h4>
+<pre class="code literal-block"><span></span>$ python3.5 mock_example.py
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">"mock_example.py"</span>, line 12, in &lt;module&gt;
+    MockMyClass.my_method.assert_called_once<span class="o">()</span>
+  File <span class="s2">"/usr/lib/python3.5/unittest/mock.py"</span>, line 583, in __getattr__
+    raise AttributeError<span class="o">(</span>name<span class="o">)</span>
+AttributeError: assert_called_once
+</pre>
+
+
+<p>Assertion error, test failing.</p>
+<h4>Output in Python 3.6</h4>
+<pre class="code literal-block"><span></span>$ python3.6 mock_example.py
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">"mock_example.py"</span>, line 12, in &lt;module&gt;
+    MockMyClass.my_method.assert_called_once<span class="o">()</span>
+  File <span class="s2">"/usr/lib/python3.6/unittest/mock.py"</span>, line 795, in assert_called_once
+    raise AssertionError<span class="o">(</span>msg<span class="o">)</span>
+AssertionError: Expected <span class="s1">'my_method'</span> to have been called once. Called <span class="m">0</span> times.
+</pre>
+
+
+<p>Test also failing with a different error message. Anyone who is (pretty) familiar with the <code>unittest.mock</code> standard library module will know <code>assert_called_once</code> was introduced in version 3.6, which is my version 3.5 is failing with an attribute error.</p>
+<h3>My test was wrong</h3>
+<p>The problem was, my original test was not testing anything at all. The 3.4 version of the <code>unittest.mock</code> standard library module did not have a <code>assert_called_once</code>. The mock, just allows you to call any method on it, to see this you can try changing the line:</p>
+<pre class="code literal-block"><span></span>        <span class="n">MockMyClass</span><span class="o">.</span><span class="n">my_method</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+</pre>
+
+
+<p>to</p>
+<pre class="code literal-block"><span></span>        <span class="n">MockMyClass</span><span class="o">.</span><span class="n">my_method</span><span class="o">.</span><span class="n">blahblah</span><span class="p">()</span>
+</pre>
+
+
+<p>With <code>python3.4</code>, <code>python3.5</code>, and <code>python3.6</code> this yields no error. So in the original program you can avoid the calling <code>MyClass.my_method</code> at all:</p>
+<pre class="code literal-block"><span></span><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">'__main__.MyClass'</span><span class="p">)</span> <span class="k">as</span> <span class="n">MockMyClass</span><span class="p">:</span>
+        <span class="c1"># Missing call to `MyClass().my_method()`</span>
+        <span class="n">MockMyClass</span><span class="o">.</span><span class="n">my_method</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span> <span class="c1"># In 3.4 this still passes.</span>
+</pre>
+
+
+<p>This does not change the (original) results, <code>python3.4</code> still raises <strong>no error</strong>, whereas <code>python3.5</code> and <code>python3.6</code> are raising the original errors.</p>
+<p>So although my code turned out to be correct (at least in as much as the desired method was called), had it been faulty (or changed to be faulty) my test would not have complained.</p>
+<h3>The Actual Problem</h3>
+<p>My mock was wrong. I should instead have been patching the actual method within the class, like so:</p>
+<pre class="code literal-block"><span></span><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">'__main__.MyClass.my_method'</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_my_method</span><span class="p">:</span>
+        <span class="n">MyClass</span><span class="p">()</span><span class="o">.</span><span class="n">my_method</span><span class="p">()</span>
+        <span class="n">mock_my_method</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+</pre>
+
+
+<p>Now if we try this in all version 3.4, 3.5, and 3.6 of python we get:</p>
+<pre class="code literal-block"><span></span>$ python3.4 mock_example.py 
+$ python3.5 mock_example.py 
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">"mock_example.py"</span>, line 12, in &lt;module&gt;
+    mock_my_method.assert_called_once<span class="o">()</span>
+  File <span class="s2">"/usr/lib/python3.5/unittest/mock.py"</span>, line 583, in __getattr__
+    raise AttributeError<span class="o">(</span>name<span class="o">)</span>
+AttributeError: assert_called_once
+$ python3.6 mock_example.py 
+$ 
+</pre>
+
+
+<p>So Python 3.4 and 3.6 pass as we expect. But Python3.5 gives an error stating that there is no <code>assert_called_once</code> method on the mock object, which is true since that method was not added until version 3.6. This is arguably what Python3.4 should have done.</p>
+<p>It remains to check that the updated test fails in Python3.6, so we comment out the call to <code>MyClass().my_method</code>:</p>
+<pre class="code literal-block"><span></span>$ python3.6 mock_example.py 
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">"mock_example.py"</span>, line 12, in &lt;module&gt;
+    mock_my_method.assert_called_once<span class="o">()</span>
+  File <span class="s2">"/usr/lib/python3.6/unittest/mock.py"</span>, line 795, in assert_called_once
+    raise AssertionError<span class="o">(</span>msg<span class="o">)</span>
+AssertionError: Expected <span class="s1">'my_method'</span> to have been called once. Called <span class="m">0</span> times.
+</pre>
+
+
+<p>This is the test I <strong>should</strong> have performed with my original test. Had I done this I would have seen that the test passed in Python3.4 regardless of whether the method in question was actually called or not.</p>
+<p>So now my test works in <code>python3.6</code>, fails in <code>python3.5</code> because I'm using the method <code>assert_called_once</code> which was introduced in <code>python3.6</code>. Unfortunately it incorrectly passes in <code>python3.4</code>. So if I want my code to work properly for python versions earlier than 3.6, then I can essentially implement <code>assert_called_once()</code> with <code>assert len(mock_my_method.mock_calls) == 1</code>. If we do this then my test passes in all three version of python and fails in all three if we comment out the call <code>MyClass().my_method()</code>.</p>
+<h3>Conclusions</h3>
+<p>I made an error in writing my original test, but my real sin was that I was a bit lazy in that I did not make sure that my tests would fail, when the code was incorrect. In this instance there was no problem with the code only the test, but that was luck. So for me, this served as a reminder to check that your tests can fail. It may be that mutation testing would have caught this error.</p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/flask-and-pytest-coverage/" class="u-url">Flask and Pytest coverage</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn">
                 Allan Clark
@@ -1572,142 +1699,6 @@ different problems. For example a statically typed language has to
 decide whether or not to include exceptions in types. A dynamically
 typed language can easily offer both. I suppose a statically typed
 language <em>could</em> offer both as well.</p>
-</div>
-    </div>
-    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/selenium-and-javascript-events/" class="u-url">Selenium and Javascript Events</a></h1>
-        <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">
-                Allan Clark
-            </span></p>
-            <p class="dateline"><a href="posts/selenium-and-javascript-events/" rel="bookmark"><time class="published dt-published" datetime="2016-03-16T18:02:32Z" title="2016-03-16 18:02">2016-03-16 18:02</time></a></p>
-                <p class="commentline">
-        
-    <a href="posts/selenium-and-javascript-events/#disqus_thread" data-disqus-identifier="cache/posts/selenium-and-javascript-events.html">Comments</a>
-
-
-        </p>
-</div>
-    </header><div class="p-summary entry-summary">
-    <div>
-<p>Selenium is a great way to test web applications and it has Python bindings.
-I explained in a <a href="posts/flask-%2B-coverage-analysis">previous post</a> how to
-set this up with coverage analysis.</p>
-<p>However, writing tests is non-trivial, in particular it is easy enough to write
-tests that suffer from race conditions. Suppose you write a test that includes
-a check for the existence of a particular DOM element. Here is a convenient method
-to make doing so a one-liner. It assumes that you are within a class that has
-the web driver as a member and that you're using 'pytest' but you can easily
-adapt this for your own needs.</p>
-<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">assertCssSelectorExists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">css_selector</span><span class="p">):</span>
-    <span class="sd">""" Asserts that there is an element that matches the given</span>
-<span class="sd">    css selector."""</span>
-    <span class="c1"># We do not actually need to do anything special here, if the</span>
-    <span class="c1"># element does not exist we fill fail with a NoSuchElementException</span>
-    <span class="c1"># however we wrap this up in a pytest.fail because the error message</span>
-    <span class="c1"># is then a bit nicer to read.</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="n">css_selector</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoSuchElementException</span><span class="p">:</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"Element {0} not found!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">css_selector</span><span class="p">))</span>
-</pre>
-
-
-<p>The problem is that this test might fail if it is performed too early. If you
-are merely testing after loading a page, this should work, however you may be
-testing after some click by a user which invokes a Javascript method.</p>
-<p>Suppose you have an application which loads a page, and then loads all comments
-made on that page (perhaps it is a blog engine). Now suppose you wish to allow
-re-loading the list of comments without re-loading the entire page. You might
-have an Ajax call.</p>
-<p>As before I tend to write my Javascript in Coffeescript, so suppose I have a
-Coffeescript function which is called when the user clicks on a
-<code>#refresh-comment-feed-button</code> button:</p>
-<pre class="code literal-block"><span></span><span class="nv">refresh_comments = </span><span class="nf">(page_id) -&gt;</span>
-  <span class="nv">posting = </span><span class="nx">$</span><span class="p">.</span><span class="nx">post</span> <span class="s">'/grabcomments'</span><span class="p">,</span> <span class="nv">page_id: </span><span class="nx">page_id</span>
-  <span class="nx">posting</span><span class="p">.</span><span class="nx">done</span> <span class="nx">receive_comments</span>
-  <span class="nx">posting</span><span class="p">.</span><span class="nx">fail</span> <span class="nf">(data) -&gt;</span>
-    <span class="p">...</span>
-</pre>
-
-
-<p>So this makes an Ajax call which will call the function <code>receive_comments</code>
-when the Ajax call returns (successfully). We write the <code>receive_comments</code> as:</p>
-<pre class="code literal-block"><span></span><span class="nv">receive_comments = </span><span class="nf">(data) -&gt;</span>
-  <span class="p">...</span> <span class="nx">code</span> <span class="nx">to</span> <span class="k">delete</span> <span class="nx">current</span> <span class="nx">comments</span> <span class="o">and</span> <span class="nx">replace</span> <span class="nx">them</span> <span class="nx">with</span> <span class="nx">those</span> <span class="nx">returned</span>
-</pre>
-
-
-<p>Typically <code>data</code> will be some JSON data, perhaps the comments associated with
-the <code>page_id</code> we gave as an argument to our Ajax call.</p>
-<p>To test this you would navigate to the page in question and check
-that there are no comments, then open a new browser window and make two
-comments (or alternatively directly adding the comments to the database),
-followed by switching back to the first browser window and then
-performing the following steps:</p>
-<pre class="code literal-block"><span></span>    <span class="n">refresh_comment_feed_css</span> <span class="o">=</span> <span class="s1">'#refresh-comment-feed-button'</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">click_element_with_css</span><span class="p">(</span><span class="n">refresh_comment_feed_css</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">check_comments</span><span class="p">([</span><span class="n">first_comment</span><span class="p">,</span> <span class="n">second_comment</span><span class="p">])</span>
-</pre>
-
-
-<p>Where <code>self.check_comments</code> is a method that checks the particular comments
-exist on the current page. This could be done by using
-<code>find_elements_by_css_selector</code> and then looking at the <code>text</code> attributes of
-each returned element.</p>
-<p>The problem is, that the final line is likely to be run before the results of
-the Ajax call invoked from the click on the <code>#refresh-comment-feed-button</code> are
-returned to the page.</p>
-<p>A quick trick to get around this is to simply change the Javascript to somehow
-record when the Ajax results are returned and then use Selenium to wait until
-the relevant Javascript evaluates to true.</p>
-<p>So we change our <code>receive_comments</code> method to be:</p>
-<pre class="code literal-block"><span></span><span class="nv">comments_successfully_updated = </span><span class="mi">0</span>
-<span class="nv">receive_comments = </span><span class="nf">(data) -&gt;</span>
-  <span class="p">...</span> <span class="nx">code</span> <span class="nx">to</span> <span class="k">delete</span> <span class="nx">current</span> <span class="nx">comments</span> <span class="o">and</span> <span class="nx">replace</span> <span class="nx">them</span> <span class="nx">with</span> <span class="nx">those</span> <span class="nx">returned</span>
-  <span class="nx">comments_successfully_updated</span> <span class="o">+=</span> <span class="mi">1</span>
-</pre>
-
-
-<p>Note that we only increment the counter after we have updated the page.</p>
-<p>Now, we can update our Selenium test to be:</p>
-<pre class="code literal-block"><span></span>    <span class="n">refresh_comment_feed_css</span> <span class="o">=</span> <span class="s1">'#refresh-comment-feed-button'</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">click_element_with_css</span><span class="p">(</span><span class="n">refresh_comment_feed_css</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_comment_refresh_count</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">check_comments</span><span class="p">([</span><span class="n">first_comment</span><span class="p">,</span> <span class="n">second_comment</span><span class="p">])</span>
-</pre>
-
-
-<p>The <code>1</code> argument assumes that this will be the first time the comments are
-updated during your test. Of course as you run down your test you can increase
-this argument as required. The code for the <code>wait_for_comment_refresh_count</code>
-is given by:</p>
-<pre class="code literal-block"><span></span><span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
-<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span>
-<span class="kn">from</span> <span class="nn">selenium.webdriver.common.by</span> <span class="kn">import</span> <span class="n">By</span>
-<span class="o">...</span>
-
-<span class="k">class</span> <span class="nc">MyTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="o">...</span> <span class="c1"># assume that 'self.driver' is set appropriately.</span>
-    <span class="k">def</span> <span class="nf">wait_for_comment_refresh_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">check_refresh_count</span><span class="p">(</span><span class="n">driver</span><span class="p">):</span>
-            <span class="n">script</span> <span class="o">=</span> <span class="s1">'return comments_successfully_updated;'</span>
-            <span class="n">feed_count</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">feed_count</span> <span class="o">==</span> <span class="n">count</span>
-        <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">check_refresh_count</span><span class="p">)</span>
-</pre>
-
-
-<p>The key point is executing the Javascript to check the
-<code>comments_successfully_updated</code> variable with <code>driver.execute_script</code>.
-We then use a <code>WebDriverWait</code> to wait for a maximum of 5 seconds until the
-our condition is satisfied.</p>
-<h3>Conclusion</h3>
-<p>Updating a Javascript counter to record when Javascript events have occurred
-can allow your Selenium tests to synchronise, that is, wait for the correct time
-to check the results of a Javascript event.</p>
-<p>This can solve problems of getting a <code>StaleElementReferenceException</code> or a
-<code>NoSuchElementException</code> because your Selenium test is running a check on an
-element too early before your page has been updated.</p>
 </div>
     </div>
     </article>

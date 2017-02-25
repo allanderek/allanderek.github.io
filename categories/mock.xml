@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet (mock)</title><link>https://allanderek.github.io/</link><description></description><atom:link href="https://allanderek.github.io/categories/mock.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Sat, 25 Feb 2017 19:21:25 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>unittest.mock small gotcha - a humbling tale of failure</title><link>https://allanderek.github.io/posts/unittestmock-small-gotcha/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;Developing a small web application I recently had reason to upgrade from Python 3.4 to Python 3.6. The reason for the upgrade was regarding ordering of keyword arguments and not related to the bug in my test code that I then found. I should have been more careful writing my test code in the first place, so I am writing this down as some penance for not testing my tests robustly enough.&lt;/p&gt;
+&lt;h3&gt;A Simple example program&lt;/h3&gt;
+&lt;p&gt;So here I have a version of the problem reduced down to the minimum required to demonstrate the issue:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;unittest.mock&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;mock&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MyClass&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;pass&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;pass&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;mock&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;patch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'__main__.MyClass'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;MockMyClass&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;MyClass&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="n"&gt;MockMyClass&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assert_called_once&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Of course in reality the line &lt;code&gt;MyClass().my_method()&lt;/code&gt; was some test code that indirectly caused the target method to be called.&lt;/p&gt;
+&lt;h4&gt;Output in Python 3.4&lt;/h4&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;$ python3.4 mock_example.py
+$
+&lt;/pre&gt;
+
+
+&lt;p&gt;No output, leading me to believe my assertions passed, so I was happy that my code and my tests were working. As it turned out, my code was fine but my test was faulty. Here's the output in two later versions of Python of the exact same program given above.&lt;/p&gt;
+&lt;h4&gt;Output in Python 3.5&lt;/h4&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;$ python3.5 mock_example.py
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;"mock_example.py"&lt;/span&gt;, line 12, in &amp;lt;module&amp;gt;
+    MockMyClass.my_method.assert_called_once&lt;span class="o"&gt;()&lt;/span&gt;
+  File &lt;span class="s2"&gt;"/usr/lib/python3.5/unittest/mock.py"&lt;/span&gt;, line 583, in __getattr__
+    raise AttributeError&lt;span class="o"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;)&lt;/span&gt;
+AttributeError: assert_called_once
+&lt;/pre&gt;
+
+
+&lt;p&gt;Assertion error, test failing.&lt;/p&gt;
+&lt;h4&gt;Output in Python 3.6&lt;/h4&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;$ python3.6 mock_example.py
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;"mock_example.py"&lt;/span&gt;, line 12, in &amp;lt;module&amp;gt;
+    MockMyClass.my_method.assert_called_once&lt;span class="o"&gt;()&lt;/span&gt;
+  File &lt;span class="s2"&gt;"/usr/lib/python3.6/unittest/mock.py"&lt;/span&gt;, line 795, in assert_called_once
+    raise AssertionError&lt;span class="o"&gt;(&lt;/span&gt;msg&lt;span class="o"&gt;)&lt;/span&gt;
+AssertionError: Expected &lt;span class="s1"&gt;'my_method'&lt;/span&gt; to have been called once. Called &lt;span class="m"&gt;0&lt;/span&gt; times.
+&lt;/pre&gt;
+
+
+&lt;p&gt;Test also failing with a different error message. Anyone who is (pretty) familiar with the &lt;code&gt;unittest.mock&lt;/code&gt; standard library module will know &lt;code&gt;assert_called_once&lt;/code&gt; was introduced in version 3.6, which is my version 3.5 is failing with an attribute error.&lt;/p&gt;
+&lt;h3&gt;My test was wrong&lt;/h3&gt;
+&lt;p&gt;The problem was, my original test was not testing anything at all. The 3.4 version of the &lt;code&gt;unittest.mock&lt;/code&gt; standard library module did not have a &lt;code&gt;assert_called_once&lt;/code&gt;. The mock, just allows you to call any method on it, to see this you can try changing the line:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;        &lt;span class="n"&gt;MockMyClass&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assert_called_once&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;to&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;        &lt;span class="n"&gt;MockMyClass&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;blahblah&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;With &lt;code&gt;python3.4&lt;/code&gt;, &lt;code&gt;python3.5&lt;/code&gt;, and &lt;code&gt;python3.6&lt;/code&gt; this yields no error. So in the original program you can avoid the calling &lt;code&gt;MyClass.my_method&lt;/code&gt; at all:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;mock&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;patch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'__main__.MyClass'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;MockMyClass&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="c1"&gt;# Missing call to `MyClass().my_method()`&lt;/span&gt;
+        &lt;span class="n"&gt;MockMyClass&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assert_called_once&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c1"&gt;# In 3.4 this still passes.&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;This does not change the (original) results, &lt;code&gt;python3.4&lt;/code&gt; still raises &lt;strong&gt;no error&lt;/strong&gt;, whereas &lt;code&gt;python3.5&lt;/code&gt; and &lt;code&gt;python3.6&lt;/code&gt; are raising the original errors.&lt;/p&gt;
+&lt;p&gt;So although my code turned out to be correct (at least in as much as the desired method was called), had it been faulty (or changed to be faulty) my test would not have complained.&lt;/p&gt;
+&lt;h3&gt;The Actual Problem&lt;/h3&gt;
+&lt;p&gt;My mock was wrong. I should instead have been patching the actual method within the class, like so:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;mock&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;patch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'__main__.MyClass.my_method'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;mock_my_method&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;MyClass&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="n"&gt;mock_my_method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assert_called_once&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now if we try this in all version 3.4, 3.5, and 3.6 of python we get:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;$ python3.4 mock_example.py 
+$ python3.5 mock_example.py 
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;"mock_example.py"&lt;/span&gt;, line 12, in &amp;lt;module&amp;gt;
+    mock_my_method.assert_called_once&lt;span class="o"&gt;()&lt;/span&gt;
+  File &lt;span class="s2"&gt;"/usr/lib/python3.5/unittest/mock.py"&lt;/span&gt;, line 583, in __getattr__
+    raise AttributeError&lt;span class="o"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;)&lt;/span&gt;
+AttributeError: assert_called_once
+$ python3.6 mock_example.py 
+$ 
+&lt;/pre&gt;
+
+
+&lt;p&gt;So Python 3.4 and 3.6 pass as we expect. But Python3.5 gives an error stating that there is no &lt;code&gt;assert_called_once&lt;/code&gt; method on the mock object, which is true since that method was not added until version 3.6. This is arguably what Python3.4 should have done.&lt;/p&gt;
+&lt;p&gt;It remains to check that the updated test fails in Python3.6, so we comment out the call to &lt;code&gt;MyClass().my_method&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;$ python3.6 mock_example.py 
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;"mock_example.py"&lt;/span&gt;, line 12, in &amp;lt;module&amp;gt;
+    mock_my_method.assert_called_once&lt;span class="o"&gt;()&lt;/span&gt;
+  File &lt;span class="s2"&gt;"/usr/lib/python3.6/unittest/mock.py"&lt;/span&gt;, line 795, in assert_called_once
+    raise AssertionError&lt;span class="o"&gt;(&lt;/span&gt;msg&lt;span class="o"&gt;)&lt;/span&gt;
+AssertionError: Expected &lt;span class="s1"&gt;'my_method'&lt;/span&gt; to have been called once. Called &lt;span class="m"&gt;0&lt;/span&gt; times.
+&lt;/pre&gt;
+
+
+&lt;p&gt;This is the test I &lt;strong&gt;should&lt;/strong&gt; have performed with my original test. Had I done this I would have seen that the test passed in Python3.4 regardless of whether the method in question was actually called or not.&lt;/p&gt;
+&lt;p&gt;So now my test works in &lt;code&gt;python3.6&lt;/code&gt;, fails in &lt;code&gt;python3.5&lt;/code&gt; because I'm using the method &lt;code&gt;assert_called_once&lt;/code&gt; which was introduced in &lt;code&gt;python3.6&lt;/code&gt;. Unfortunately it incorrectly passes in &lt;code&gt;python3.4&lt;/code&gt;. So if I want my code to work properly for python versions earlier than 3.6, then I can essentially implement &lt;code&gt;assert_called_once()&lt;/code&gt; with &lt;code&gt;assert len(mock_my_method.mock_calls) == 1&lt;/code&gt;. If we do this then my test passes in all three version of python and fails in all three if we comment out the call &lt;code&gt;MyClass().my_method()&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Conclusions&lt;/h3&gt;
+&lt;p&gt;I made an error in writing my original test, but my real sin was that I was a bit lazy in that I did not make sure that my tests would fail, when the code was incorrect. In this instance there was no problem with the code only the test, but that was luck. So for me, this served as a reminder to check that your tests can fail. It may be that mutation testing would have caught this error.&lt;/p&gt;&lt;/div&gt;</description><category>3.4</category><category>3.5</category><category>3.6</category><category>mock</category><category>python</category><category>standard library</category><category>testing</category><guid>https://allanderek.github.io/posts/unittestmock-small-gotcha/</guid><pubDate>Sat, 25 Feb 2017 12:36:24 GMT</pubDate></item></channel></rss>
