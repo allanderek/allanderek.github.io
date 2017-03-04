@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/archive.html</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/34/</loc>
@@ -94,6 +94,10 @@
   <lastmod>2016-05-29T20:05:00Z</lastmod>
  </url>
  <url>
+  <loc>https://allanderek.github.io/categories/poker-analysis-odds/</loc>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://allanderek.github.io/categories/python/</loc>
   <lastmod>2016-05-29T20:05:00Z</lastmod>
  </url>
@@ -135,7 +139,7 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/index-1.html</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/covering-dead-code/</loc>
@@ -180,6 +184,10 @@
  <url>
   <loc>https://allanderek.github.io/posts/minor-refactorings/</loc>
   <lastmod>2017-02-07T15:12:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/posts/poker-puzzle/</loc>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/python-and-lambdas/</loc>

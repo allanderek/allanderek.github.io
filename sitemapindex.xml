@@ -7,15 +7,15 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://allanderek.github.io/categories/34.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/35.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/36.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/casperjs.xml</loc>
@@ -67,15 +67,19 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/mock.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/mutation-testing.xml</loc>
   <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://allanderek.github.io/categories/poker-analysis-odds.xml</loc>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://allanderek.github.io/categories/python.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/refactoring.xml</loc>
@@ -91,7 +95,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/standard-library.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/statically-typed-languages.xml</loc>
@@ -103,7 +107,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/testing.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-02-25T19:21:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/tests.xml</loc>
@@ -115,10 +119,10 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/rss.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2017-02-25T18:49:00Z</lastmod>
+  <lastmod>2017-03-04T14:40:00Z</lastmod>
  </sitemap>
 </sitemapindex>
