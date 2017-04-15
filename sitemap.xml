@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/archive.html</loc>
-  <lastmod>2017-03-04T14:40:00Z</lastmod>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/</loc>
-  <lastmod>2017-03-04T14:40:00Z</lastmod>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/34/</loc>
@@ -82,8 +82,16 @@
   <lastmod>2017-01-28T12:57:00Z</lastmod>
  </url>
  <url>
+  <loc>https://allanderek.github.io/categories/local-elections/</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://allanderek.github.io/categories/maintenance/</loc>
   <lastmod>2017-01-03T16:39:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/categories/manifestos/</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/mock/</loc>
@@ -96,6 +104,10 @@
  <url>
   <loc>https://allanderek.github.io/categories/poker-analysis-odds/</loc>
   <lastmod>2017-03-04T14:40:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/categories/politics/</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/categories/python/</loc>
@@ -139,7 +151,7 @@
  </url>
  <url>
   <loc>https://allanderek.github.io/index-1.html</loc>
-  <lastmod>2017-03-04T14:40:00Z</lastmod>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/covering-dead-code/</loc>
@@ -192,6 +204,10 @@
  <url>
   <loc>https://allanderek.github.io/posts/python-and-lambdas/</loc>
   <lastmod>2017-02-10T15:17:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://allanderek.github.io/posts/scottish-local-election-2017/</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://allanderek.github.io/posts/selenium-and-casper/</loc>

@@ -62,8 +62,16 @@
   <lastmod>2017-01-28T13:19:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://allanderek.github.io/categories/local-elections.xml</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://allanderek.github.io/categories/maintenance.xml</loc>
   <lastmod>2017-02-07T15:52:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/manifestos.xml</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/mock.xml</loc>
@@ -75,7 +83,11 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/poker-analysis-odds.xml</loc>
-  <lastmod>2017-03-04T14:40:00Z</lastmod>
+  <lastmod>2017-03-04T14:51:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/politics.xml</loc>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/python.xml</loc>
@@ -119,10 +131,10 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/rss.xml</loc>
-  <lastmod>2017-03-04T14:40:00Z</lastmod>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2017-03-04T14:40:00Z</lastmod>
+  <lastmod>2017-04-15T14:14:00Z</lastmod>
  </sitemap>
 </sitemapindex>
