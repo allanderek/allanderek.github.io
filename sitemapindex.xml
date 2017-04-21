@@ -30,6 +30,10 @@
   <lastmod>2017-01-03T16:39:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://allanderek.github.io/categories/conditionals.xml</loc>
+  <lastmod>2017-04-21T14:47:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://allanderek.github.io/categories/containers.xml</loc>
   <lastmod>2017-01-28T13:19:00Z</lastmod>
  </sitemap>
@@ -63,7 +67,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/local-elections.xml</loc>
-  <lastmod>2017-04-15T14:14:00Z</lastmod>
+  <lastmod>2017-04-15T14:53:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/maintenance.xml</loc>
@@ -71,7 +75,7 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/manifestos.xml</loc>
-  <lastmod>2017-04-15T14:14:00Z</lastmod>
+  <lastmod>2017-04-15T14:53:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/mock.xml</loc>
@@ -87,15 +91,19 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/politics.xml</loc>
-  <lastmod>2017-04-15T14:14:00Z</lastmod>
+  <lastmod>2017-04-15T14:53:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/python.xml</loc>
-  <lastmod>2017-02-25T19:21:00Z</lastmod>
+  <lastmod>2017-04-21T14:47:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/refactoring.xml</loc>
-  <lastmod>2017-02-07T15:52:00Z</lastmod>
+  <lastmod>2017-04-21T14:47:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://allanderek.github.io/categories/requests.xml</loc>
+  <lastmod>2017-04-21T14:47:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/categories/scc.xml</loc>
@@ -131,10 +139,10 @@
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/rss.xml</loc>
-  <lastmod>2017-04-15T14:14:00Z</lastmod>
+  <lastmod>2017-04-21T14:47:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://allanderek.github.io/sitemap.xml</loc>
-  <lastmod>2017-04-15T14:14:00Z</lastmod>
+  <lastmod>2017-04-21T14:47:00Z</lastmod>
  </sitemap>
 </sitemapindex>

@@ -1,5 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0"><channel><title>Coding Diet</title><link>https://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link type="application/rss+xml" href="https://allanderek.github.io/rss.xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sat, 15 Apr 2017 14:24:35 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Scottish Local Election 2017</title><link>https://allanderek.github.io/posts/scottish-local-election-2017/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;I wanted to compare the manifestos for the local elections so I did a quick search but it came up with nothing. I was hoping for a simple page somewhere that simply listed where to find all of the parties' manifestos. To save you the bother, here is where to find the manifestos of the five parties listed on my postal ballot form (in the order that they are listed), all of the homepages were found with a simple google search:&lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Diet</title><link>https://allanderek.github.io/</link><description>My quest to stop writing too much code.</description><atom:link href="https://allanderek.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Fri, 21 Apr 2017 15:00:38 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Conditional refactorings</title><link>https://allanderek.github.io/posts/conditional-refactorings/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;I have been reading through some of the &lt;a href="https://github.com/kennethreitz/requests"&gt;source code&lt;/a&gt; from the &lt;a href="http://docs.python-requests.org/en/master/"&gt;requests&lt;/a&gt; library. This is one of the more well-known, well-used, well-loved, and well-praised  Python libraries I know of. I came across some conditional code which I personally would refactor. A first refactor I'm pretty confident about whilst a second I'm less certain is an improvement. I'll detail them both and welcome any comments anyone has.&lt;/p&gt;
+&lt;p&gt;A specific example of this kind of conditional comes in the &lt;a href="https://github.com/kennethreitz/requests/blob/master/requests/adapters.py"&gt;adapters module&lt;/a&gt; specifically the &lt;a href="https://github.com/kennethreitz/requests/blob/master/requests/adapters.py#L200"&gt;cert_verify method&lt;/a&gt;. Here is the code in question, slightly snipped for brevity:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;cert_verify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cert&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="sd"&gt;"""Verify a SSL certificate. This method should not be called from user&lt;/span&gt;
+&lt;span class="sd"&gt;        ...&lt;/span&gt;
+&lt;span class="sd"&gt;        :param verify: Either a boolean, in which case it controls whether we verify&lt;/span&gt;
+&lt;span class="sd"&gt;        """&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;startswith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'https'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+
+            &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+
+            &lt;span class="c1"&gt;# Allow self-specified cert location.&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;
+
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DEFAULT_CA_BUNDLE_PATH&lt;/span&gt;
+
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+                &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;IOError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Could not find a suitable TLS CA certificate bundle, "&lt;/span&gt;
+                              &lt;span class="s2"&gt;"invalid path: {0}"&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+            &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cert_reqs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'CERT_REQUIRED'&lt;/span&gt;
+
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+                &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_certs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;
+            &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_cert_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;
+        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cert_reqs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'CERT_NONE'&lt;/span&gt;
+            &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_certs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+            &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_cert_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;The two refactors I would consider is the setting of &lt;code&gt;cert_loc&lt;/code&gt; and the order of the two conditional branches, ie. the &lt;code&gt;if&lt;/code&gt; and &lt;code&gt;else&lt;/code&gt; branches.&lt;/p&gt;
+&lt;h3&gt;Setting &lt;code&gt;cert_loc&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;This kind of pattern is quite common where a variable is set to a particular value and then a condition is evaluated which may result in the variable being updated. In this particular example we have:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Allow self-specified cert location.&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DEFAULT_CA_BUNDLE_PATH&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;First of all note that &lt;code&gt;verify&lt;/code&gt; cannot be &lt;code&gt;Falsey&lt;/code&gt;. So at the end of these conditionals &lt;code&gt;cert_loc&lt;/code&gt; will either be &lt;code&gt;DEFAULT_CA_BUNDLE_PATH&lt;/code&gt; if &lt;code&gt;verify&lt;/code&gt; is exactly &lt;code&gt;True&lt;/code&gt; or it will be set to whatever &lt;code&gt;verify&lt;/code&gt; is. So we can write this more succinctly as:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DEFAULT_CA_BUNDLE_PATH&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;If you don't like the conditional &lt;em&gt;expression&lt;/em&gt; you can do this as:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DEFAULT_CA_BUNDLE_PATH&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;All this was only really possible because we knew that &lt;code&gt;verify&lt;/code&gt; could not be &lt;code&gt;Falsey&lt;/code&gt;. Still I consider the setting of a variable to a default before then considering whether or not to update it to be a very minor anti-pattern. So imagine that we could not be sure that &lt;code&gt;verify&lt;/code&gt; is not &lt;code&gt;Falsey&lt;/code&gt;, we could still re-write our conditional without the default setting as:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DEFAULT_CA_BUNDLE_PATH&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;More generally where you see the pattern:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;cond1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;val1&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;cond2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;val2&lt;/span&gt;
+    &lt;span class="o"&gt;...&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;default_x&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Then you can change this to be:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;cond1&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;val1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;val1&lt;/span&gt;
+    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;cond2&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;val2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;val2&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;default_x&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Sometimes this is awkward if one or more of the &lt;code&gt;val_?&lt;/code&gt; values are interesting expressions.&lt;/p&gt;
+&lt;p&gt;One defence of the original style is that you know your variable will be set to &lt;em&gt;something&lt;/em&gt; so you will never end up with an undefined variable error. However, if this were ever the case then you have not fully written down your logic, and hence the early error is likely a good thing.&lt;/p&gt;
+&lt;h3&gt;Switch the &lt;code&gt;if&lt;/code&gt; and &lt;code&gt;else&lt;/code&gt; branches&lt;/h3&gt;
+&lt;p&gt;A suggestion I often make when you have two branches, such that one is significantly shorter than the other, is to have the shorter branch first. The reason for this is to give the reader less of a "stack" to recall as they are reading through the code. Often when reading code you get to the end of the long branch, to find a shorter second branch but you've forgotten what the original condition was. So, it's tempting to suggest to modify the original condition as:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;startswith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'https'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cert_reqs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'CERT_NONE'&lt;/span&gt;
+        &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_certs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+        &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_cert_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+        &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="c1"&gt;# Allow self-specified cert location.&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;
+
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DEFAULT_CA_BUNDLE_PATH&lt;/span&gt;
+
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;IOError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Could not find a suitable TLS CA certificate bundle, "&lt;/span&gt;
+                          &lt;span class="s2"&gt;"invalid path: {0}"&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+        &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cert_reqs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'CERT_REQUIRED'&lt;/span&gt;
+
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cert_loc&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_certs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;
+        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ca_cert_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cert_loc&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;I hesitate to suggest it in this case because the original &lt;code&gt;if&lt;/code&gt; branch has code which depends upon the condition, namely that &lt;code&gt;verify&lt;/code&gt; is not &lt;code&gt;Falsey&lt;/code&gt;. However, more generally this can be something of a win for the person reading the code.&lt;/p&gt;
+&lt;p&gt;So, two pretty simple refactors, thoughts?&lt;/p&gt;&lt;/div&gt;</description><category>conditionals</category><category>python</category><category>refactoring</category><category>requests</category><guid>https://allanderek.github.io/posts/conditional-refactorings/</guid><pubDate>Fri, 21 Apr 2017 13:41:48 GMT</pubDate></item><item><title>Scottish Local Elections 2017</title><link>https://allanderek.github.io/posts/scottish-local-election-2017/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;I wanted to compare the manifestos for the local elections so I did a quick search but it came up with nothing. I was hoping for a simple page somewhere that simply listed where to find all of the parties' manifestos. To save you the bother, here is where to find the manifestos of the five parties listed on my postal ballot form (in the order that they are listed), all of the homepages were found with a simple google search:&lt;/p&gt;
 &lt;h3&gt;Green Party&lt;/h3&gt;
 &lt;p&gt;Their &lt;a href="https://greens.scot/"&gt;homepage&lt;/a&gt; has a large button stating clearly where the manifesto is, which goes to a &lt;a href="https://greens.scot/power-in-your-hands"&gt;web version&lt;/a&gt;, which is nice for reading on say a smartphone, as well as a &lt;a href="https://greens.scot/sites/default/files/Campaigns/Scottish%20Greens%202017%20Council%20Manifesto%20for%20download.pdf"&gt;PDF download&lt;/a&gt;. Good job in making it easy.&lt;/p&gt;
 &lt;h3&gt;SNP&lt;/h3&gt;
@@ -906,234 +1029,4 @@ would need to allow something like:&lt;/p&gt;
 
 
 &lt;p&gt;Note that this is even more of an extension than that proposed. That is assigning
-&lt;code&gt;x&lt;/code&gt; to a particular sub-expression of the condition.&lt;/p&gt;&lt;/div&gt;</description><category>python</category><category>syntax</category><guid>https://allanderek.github.io/posts/if-as-syntax-possibility/</guid><pubDate>Sat, 14 Jan 2017 15:18:08 GMT</pubDate></item><item><title>Lazy calculation</title><link>https://allanderek.github.io/posts/lazy-calculation/</link><dc:creator>Allan Clark</dc:creator><description>&lt;div&gt;&lt;p&gt;In many cases whilst programming there is a decision to be made as to whether
-to &lt;em&gt;store&lt;/em&gt; some state, or (re)&lt;em&gt;caluate&lt;/em&gt; it as and when needed. Obviously every
-situation is different and therefore there is no one answer which fits. In this
-post I'm going to attempt to explain the distinction and the benefits/drawbacks
-of either approach. I hope that just remembering that this choice exists will
-force me to make an explicit choice, such that I may think about it a bit more.&lt;/p&gt;
-&lt;h2&gt;Distinction&lt;/h2&gt;
-&lt;p&gt;The distinction is a little akin to that between eager evaluation and lazy
-evalution but it is not the same. The distinction here is about code-maintenance.
-I'll start with a very simple example, and then move to a more realistic example
-which involves access to a database, which makes the decision a bit more interesting.&lt;/p&gt;
-&lt;p&gt;Suppose you have a very simple &lt;code&gt;class&lt;/code&gt; representing a person and the children
-that they may have:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt; = []
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt; = []
-
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_girl&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;)
-        &lt;span class="n"&gt;girl&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'female'&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;girl&lt;/span&gt;)
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;girl&lt;/span&gt;
-
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_boy&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
-        &lt;span class="n"&gt;boy&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'male'&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;boy&lt;/span&gt;)
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;boy&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;Now, suppose somewhere in your code you wish to return the number of children
-that a particular person has. You can either keep track of this, or calculate it
-on the fly, here is the keep-track-of-it version:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt; = []
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt; = []
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;number_of_children&lt;/span&gt; = &lt;span class="mi"&gt;0&lt;/span&gt;
-
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_girl&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;)
-        &lt;span class="n"&gt;girl&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'female'&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;girl&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;number_of_children&lt;/span&gt; += &lt;span class="mi"&gt;1&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;girl&lt;/span&gt;
-
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_boy&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
-        &lt;span class="n"&gt;boy&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'boy'&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;boy&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;number_of_children&lt;/span&gt; += &lt;span class="mi"&gt;1&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;boy&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;Here is a possible calculate-it-on-the-fly version:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;gender&lt;/span&gt;):
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;gender&lt;/span&gt; = &lt;span class="n"&gt;gender&lt;/span&gt;
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt; = []
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt; = []
-
-    &lt;span class="nv"&gt;@property&lt;/span&gt;
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;number_of_children&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;) + &lt;span class="n"&gt;len&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;)
-
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_girl&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;)
-        &lt;span class="n"&gt;girl&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'female'&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;girls&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;girl&lt;/span&gt;)
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;girl&lt;/span&gt;
-
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;have_baby_boy&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
-        &lt;span class="n"&gt;boy&lt;/span&gt; = &lt;span class="n"&gt;Person&lt;/span&gt;(&lt;span class="s"&gt;'boy'&lt;/span&gt;)
-        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;boys&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;boy&lt;/span&gt;)
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;boy&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;In this particular case I prefer the calculate-it-on-the-fly approach. I like
-that I did not have to modify any existing code, I only had to add some. If I
-add some other method (suppose an &lt;code&gt;adopt&lt;/code&gt; method) then in the keep-track-of-it
-version I have to make sure I update our state variable &lt;code&gt;number_of_children&lt;/code&gt;
-appropriately. Finally, if we change our definition of what a 'child' is,
-suppose they have to be under 18 years-of-age, then keeping track-of-it, might
-not work at all, or if it does I have to be very careful about updating parents
-whenever a child ages.&lt;/p&gt;
-&lt;p&gt;In terms of performance, this is often trickty to evaluate correctly. Essentially,
-you're asking whether the calculation of the state on the fly, is more expensive,
-than code to keep track of it. This of course depends hugely on often you inspect
-the state. You may do a lot of work to keep-track of a state variable that is
-never inspected, or inspected only very rarely. On the other hand, if it is
-inspected often, but not updated much, the calculate-it-on-the-fly approach,
-may be needlessly re-doing the exact same computation many times.&lt;/p&gt;
-&lt;p&gt;As a side-note there is a &lt;a href="https://pypi.python.org/pypi/lazy/1.2"&gt;lazy&lt;/a&gt; package
-for Python that lets you calculate attributes once when needed, and then stores
-the result for later retrieval. Of course if you update anything the calculation
-depends upon you have to make sure an invalidate the stored result. I've found
-it is useful in the case that an attribute won't ever need to be re-calculated,
-but might never need to be calculated at all (and is expensive to do so).&lt;/p&gt;
-&lt;h2&gt;More interesting example&lt;/h2&gt;
-&lt;p&gt;For in-memory occurrences such as the simple example above, often the choice is
-pretty clear. Code is often clearer if you calculate-it-on-the-fly, and only
-resort to keep-track-of-it whenever the value is somewhat expensive to calculate,
-used very often, or particularly simple to keep track of.&lt;/p&gt;
-&lt;p&gt;However, the choice becomes more interesting when the calculation of the value
-involves some external state, even if keeping-track-of-it is done on the
-external state. A common case is when the state is kept in a database. In Python,
-you may well be using an ORM to access the external state. &lt;/p&gt;
-&lt;p&gt;Consider an online game website, for some game that has four players. Let's
-suppose the game is turn-based and players are not expected to be logged in for
-the entire duration, but just take their turn whenever they are online. The game
-then can be in multiple states: waiting for players, running, finished. So in
-some ORM you might describe a game like:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Game&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
-    &lt;span class="n"&gt;player_one_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
-    &lt;span class="n"&gt;player_two_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
-    &lt;span class="n"&gt;player_three_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
-    &lt;span class="n"&gt;player_four_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
-
-    &lt;span class="n"&gt;winner_id&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Integer&lt;/span&gt;, &lt;span class="n"&gt;ForeignKey&lt;/span&gt;(&lt;span class="s"&gt;'user.id'&lt;/span&gt;))
-
-    .... &lt;span class="n"&gt;bunch&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt; &lt;span class="n"&gt;columns&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;actually&lt;/span&gt; &lt;span class="n"&gt;describe&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;game&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; ....
-&lt;/pre&gt;
-
-
-&lt;p&gt;Now, suppose you wish to display a list of running games for a user, you could
-do it something like this:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Game&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
-    ... &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="o"&gt;before&lt;/span&gt; ...
-    &lt;span class="n"&gt;state_names&lt;/span&gt; = [&lt;span class="s"&gt;'waiting'&lt;/span&gt;, &lt;span class="s"&gt;'running'&lt;/span&gt;, &lt;span class="s"&gt;'finished'&lt;/span&gt;]
-    &lt;span class="k"&gt;state&lt;/span&gt; = &lt;span class="n"&gt;Column&lt;/span&gt;(&lt;span class="n"&gt;Enum&lt;/span&gt;(*&lt;span class="n"&gt;state_names&lt;/span&gt;), &lt;span class="n"&gt;nullable&lt;/span&gt;=&lt;span class="nb"&gt;False&lt;/span&gt;, &lt;span class="k"&gt;default&lt;/span&gt;=&lt;span class="s"&gt;'waiting'&lt;/span&gt;)
-
-    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;running_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
-        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="k"&gt;state&lt;/span&gt; == &lt;span class="s"&gt;'running'&lt;/span&gt;,
-            &lt;span class="n"&gt;or_&lt;/span&gt;(
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-            )
-        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
-
-    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;open_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
-        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="k"&gt;state&lt;/span&gt; == &lt;span class="s"&gt;'waiting'&lt;/span&gt;,
-            &lt;span class="n"&gt;and_&lt;/span&gt;(
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-            )
-        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;Using this way you would have to make sure that when the fourth player joins a
-game the state is set to 'running', and when the game finishes the state is set
-to 'finished', along with the 'winner' being set.&lt;/p&gt;
-&lt;p&gt;Instead one could use calculate-it-on-the-fly as in:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Game&lt;/span&gt;(&lt;span class="n"&gt;database&lt;/span&gt;.&lt;span class="n"&gt;Model&lt;/span&gt;):
-    ... &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="o"&gt;before&lt;/span&gt; ...
-    &lt;span class="c c-Singleline"&gt;# No state column&lt;/span&gt;
-
-    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;running_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
-        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; != &lt;span class="n"&gt;None&lt;/span&gt;,
-            &lt;span class="n"&gt;or_&lt;/span&gt;(
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; == &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-            ),
-            &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;winner_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;
-        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
-
-    &lt;span class="nv"&gt;@staticmethod&lt;/span&gt;
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;open_games&lt;/span&gt;(&lt;span class="n"&gt;user&lt;/span&gt;):
-        &lt;span class="n"&gt;games&lt;/span&gt; = &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;query&lt;/span&gt;.&lt;span class="n"&gt;filter&lt;/span&gt;(
-            &lt;span class="n"&gt;or_&lt;/span&gt;(
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; == &lt;span class="n"&gt;None&lt;/span&gt;,
-            )
-            &lt;span class="n"&gt;and_&lt;/span&gt;(
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_one_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_two_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_three_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-                &lt;span class="n"&gt;Game&lt;/span&gt;.&lt;span class="n"&gt;player_four_id&lt;/span&gt; != &lt;span class="n"&gt;user&lt;/span&gt;.&lt;span class="n"&gt;id&lt;/span&gt;,
-            )
-        ).&lt;span class="nb"&gt;all&lt;/span&gt;()
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;games&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;This could be simplified a bit if we assume that players fill slots in order
-such that it is never the case that &lt;code&gt;Game.player_four_id&lt;/code&gt; is not &lt;code&gt;None&lt;/code&gt; whilst
-one of the others is. &lt;/p&gt;
-&lt;p&gt;In this particular case then I think the keep-track-of-it is a little simpler.
-But this hugely depends on the logic for joining a game, taking ones turn, and
-finishing the game. In particular when a game is finished you have to set the
-&lt;code&gt;winner_id&lt;/code&gt; column anyway, so it seems like not too much of a burden to
-additionally set the &lt;code&gt;state&lt;/code&gt; column.&lt;/p&gt;
-&lt;p&gt;However, there are many situations in which, calculate-it-on-the-fly is more
-appropriate. A common case, occurs when the rules for state changes may change.
-For example, in the game case, we may decide that as long as there are two
-players, people can play the game, which is therefore &lt;code&gt;running&lt;/code&gt;. People may
-join a &lt;code&gt;running&lt;/code&gt; game, provided it is not full, and may leave a &lt;code&gt;running&lt;/code&gt; game.
-In this case, calculate-it-on-the-fly simply updates the rules for when a game
-is &lt;code&gt;running&lt;/code&gt;. However, keep-track-of-it, not only has to update its rules for
-when to modify a state (including now reverting a game from &lt;code&gt;running&lt;/code&gt; to
-&lt;code&gt;waiting&lt;/code&gt; when someone leaves a two player game), but must also go through the
-database and modify the &lt;code&gt;state&lt;/code&gt; column of any existing games. To do this, the
-database update code will essentially have to mimic the &lt;code&gt;calculate-it-on-the-fly&lt;/code&gt;
-code anyway.&lt;/p&gt;
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;There is often a choice to be made between maintaining some kind of state up-front,
-and calculating it whenever it is required. Both are useful and should be used
-depending on the situation. Recalling that there is such a choice may help a
-programmer to explicitly make that choice, and perhaps even record the reasons
-for it.&lt;/p&gt;&lt;/div&gt;</description><category>maintenance</category><category>python</category><guid>https://allanderek.github.io/posts/lazy-calculation/</guid><pubDate>Wed, 11 Jan 2017 17:47:02 GMT</pubDate></item></channel></rss>
+&lt;code&gt;x&lt;/code&gt; to a particular sub-expression of the condition.&lt;/p&gt;&lt;/div&gt;</description><category>python</category><category>syntax</category><guid>https://allanderek.github.io/posts/if-as-syntax-possibility/</guid><pubDate>Sat, 14 Jan 2017 15:18:08 GMT</pubDate></item></channel></rss>

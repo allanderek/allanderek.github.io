@@ -1,5 +1,5 @@
 <!-- 
-.. title: Scottish Local Election 2017
+.. title: Scottish Local Elections 2017
 .. slug: scottish-local-election-2017
 .. date: 2017-04-15 14:40:31 UTC+01:00
 .. tags: politics, local elections, manifestos
